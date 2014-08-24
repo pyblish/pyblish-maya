@@ -1,0 +1,6 @@
+*.swatches
+.idea
+**/published
+*.mb
+*.pyc
+coverage
