@@ -1,4 +1,5 @@
-publish-maya
-============
+# ![Maya-Publish][]
 
 Autodesk Maya integration of Publish
+
+[Maya-Publish]: https://github.com/abstractfactory/publish/wiki/images/maya-publish.png

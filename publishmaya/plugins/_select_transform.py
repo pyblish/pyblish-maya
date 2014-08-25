@@ -1,5 +1,5 @@
-import publish.backend.plugin
 import publish.config
+import publish.backend.plugin
 
 import maya.cmds as cmds
 
@@ -18,20 +18,15 @@ class SelectTransform(publish.backend.plugin.Selector):
 
     """
 
-    @property
-    def hosts(self):
-        return ['maya']
+    hosts = ['maya']
+    version = (0, 1, 0)
 
-    @property
-    def version(self):
-        return (0, 1, 0)
-
-    def process(self):
+    def process(self, context):
         for transform in cmds.ls("*." + publish.config.identifier,
                                  objectsOnly=True,
                                  type='transform'):
 
-            instance = publish.domain.Instance(name=transform)
+            instance = publish.backend.plugin.Instance(name=transform)
 
             instance.add(transform)
             for child in cmds.listRelatives(transform, allDescendents=True):
@@ -49,6 +44,6 @@ class SelectTransform(publish.backend.plugin.Selector):
 
                 instance.config[attr] = value
 
-            self.context.add(instance)
+            context.add(instance)
 
-        return self.context
+            yield instance, None

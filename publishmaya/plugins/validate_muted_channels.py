@@ -23,7 +23,7 @@ class ValidateMutedChannels(publish.backend.plugin.Validator):
     def version(self):
         return (0, 1, 0)
 
-    def process(self):
+    def process(self, context):
         """Look for nodes of type 'mute'"""
         mutes = cmds.ls(type='mute')
         if mutes:

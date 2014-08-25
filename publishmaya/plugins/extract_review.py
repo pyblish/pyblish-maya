@@ -35,7 +35,7 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
     hosts = ['maya']
     version = (0, 1, 0)
 
-    def process(self):
+    def process(self, context):
         """Extracting a playblast is quite involved.
 
         Step one is finding an appropriate panel to playblast from.
@@ -54,9 +54,12 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
 
         temp_dir = tempfile.mkdtemp()
 
+        compatible_instances = list(publish.backend.plugin.instances_by_plugin(
+            instances=context, plugin=self))
+
         # Get cameras
         cameras = list()
-        for instance in self.instances:
+        for instance in compatible_instances:
             for node in instance:
                 self.log.debug("Looking for camera: {0}".format(node))
 
@@ -94,7 +97,7 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
         cmds.panel(previous_panel, edit=True, replacePanel=playblast_panel)
 
         # Establish configuration
-        for instance in self.instances:
+        for instance in compatible_instances:
 
             config = instance.config
 
@@ -121,7 +124,8 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
             # Make one playblast per included camera
             try:
                 for camera in cameras:
-                    self.log.info("Playblasting {camera}".format(camera=camera))
+                    self.log.info("Playblasting {camera}".format(
+                        camera=camera))
                     cmds.lookThru(playblast_panel, camera)
 
                     cmds.isolateSelect(playblast_panel, state=True)
@@ -146,7 +150,9 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
                 if previous_camera:
                     cmds.lookThru(playblast_panel, previous_camera)
 
-                cmds.panel(playblast_panel, edit=True, replacePanel=previous_panel)
+                cmds.panel(playblast_panel,
+                           edit=True,
+                           replacePanel=previous_panel)
                 cmds.refresh(suspend=False)
 
             # Move temporary files to directory relative the
@@ -156,6 +162,8 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
             self.commit(temp_dir, family=family)
             self.log.info("_extract_model: Clearing local cache..")
             shutil.rmtree(temp_dir)
+
+            yield instance, None
 
     def commit(self, path, family):
         """Move to timestamped destination relative workspace"""

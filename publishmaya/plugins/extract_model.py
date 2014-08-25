@@ -30,9 +30,6 @@ class ExtractModelAsMa(publish.backend.plugin.Extractor):
         compatible_instances = publish.backend.plugin.instances_by_plugin(
             instances=context, plugin=self)
 
-        print "Compatible instances for extractor: %s" % list(
-            compatible_instances)
-
         for instance in compatible_instances:
             family = instance.config.get('family')
 
