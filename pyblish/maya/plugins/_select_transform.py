@@ -1,10 +1,10 @@
-import publish.config
-import publish.backend.plugin
+import pyblish.backend.config
+import pyblish.backend.plugin
 
 import maya.cmds as cmds
 
 
-class SelectTransform(publish.backend.plugin.Selector):
+class SelectTransform(pyblish.backend.plugin.Selector):
     """Select instances of node-type 'transform'
 
     Opens up the doors for nested instances.
@@ -22,11 +22,11 @@ class SelectTransform(publish.backend.plugin.Selector):
     version = (0, 1, 0)
 
     def process(self, context):
-        for transform in cmds.ls("*." + publish.config.identifier,
+        for transform in cmds.ls("*." + pyblish.backend.config.identifier,
                                  objectsOnly=True,
                                  type='transform'):
 
-            instance = publish.backend.plugin.Instance(name=transform)
+            instance = pyblish.backend.plugin.Instance(name=transform)
 
             instance.add(transform)
             for child in cmds.listRelatives(transform, allDescendents=True):
@@ -34,7 +34,7 @@ class SelectTransform(publish.backend.plugin.Selector):
 
             attrs = cmds.listAttr(transform, userDefined=True)
             for attr in attrs:
-                if attr == publish.config.identifier:
+                if attr == pyblish.backend.config.identifier:
                     continue
 
                 try:

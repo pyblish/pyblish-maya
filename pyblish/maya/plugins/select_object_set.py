@@ -1,12 +1,12 @@
-import publish.lib
-import publish.config
-import publish.backend.plugin
+import pyblish.backend.lib
+import pyblish.backend.config
+import pyblish.backend.plugin
 
 import maya.cmds as cmds
 
 
-@publish.lib.log
-class SelectObjectSet(publish.backend.plugin.Selector):
+@pyblish.backend.lib.log
+class SelectObjectSet(pyblish.backend.plugin.Selector):
     """Select instances of node-type 'transform'
 
     Opens up the doors for instances containing nodes of any type,
@@ -20,11 +20,11 @@ class SelectObjectSet(publish.backend.plugin.Selector):
     version = (0, 1, 0)
 
     def process(self, context):
-        for objset in cmds.ls("*." + publish.config.identifier,
+        for objset in cmds.ls("*." + pyblish.backend.config.identifier,
                               objectsOnly=True,
                               type='objectSet'):
 
-            instance = publish.backend.plugin.Instance(name=objset)
+            instance = pyblish.backend.plugin.Instance(name=objset)
             self.log.info("Adding instance: {0}".format(objset))
 
             for node in cmds.sets(objset, query=True):
@@ -38,7 +38,7 @@ class SelectObjectSet(publish.backend.plugin.Selector):
 
             attrs = cmds.listAttr(objset, userDefined=True)
             for attr in attrs:
-                if attr == publish.config.identifier:
+                if attr == pyblish.backend.config.identifier:
                     continue
 
                 try:

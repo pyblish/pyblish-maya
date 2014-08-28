@@ -1,9 +1,9 @@
-import publish.backend.plugin
+import pyblish.backend.plugin
 
 from maya import cmds
 
 
-class ValidateMutedChannels(publish.backend.plugin.Validator):
+class ValidateMutedChannels(pyblish.backend.plugin.Validator):
     """Ensure no muted channels exists in scene
 
     Todo: Ensure no muted channels are associated with involved nodes

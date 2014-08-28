@@ -1,4 +1,4 @@
 Maya Pyblish
 ============
 
-Autodesk Maya integration of Publish
+Autodesk Maya integration of Pyblish

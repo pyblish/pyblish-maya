@@ -1,12 +1,13 @@
-"""Select all relevant nodes in the scene for publish"""
+"""Select all relevant nodes in the scene for pyblish"""
 
 from maya import cmds
+
 
 for objset in cmds.ls("*.publishable", objectsOnly=True):
     instances = cmds.sets(objset, query=True)
     for instance in instances:
         cls = cmds.getAttr(objset + ".class")
-        print "Publishing %s for %s" % (cls, instance)
+        print "Pyblishing %s for %s" % (cls, instance)
 
         if cls == 'pointcache':
             meshes = list()

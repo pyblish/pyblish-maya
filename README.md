@@ -1,5 +1,7 @@
 # ![Pyblish Maya][]
 
-Autodesk Maya integration of Publish
+Autodesk Maya integration of Pyblish
 
-[Maya-Publish]: https://github.com/abstractfactory/publish/wiki/images/maya-publish.png
+> Note, pyblish.maya is a [namespace package](http://legacy.python.org/dev/peps/pep-0420)
+
+[Pyblish Maya]: https://github.com/abstractfactory/pyblish/wiki/images/maya-pyblish.png

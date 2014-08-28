@@ -1,9 +1,9 @@
-import publish.backend.plugin
+import pyblish.backend.plugin
 
 import pymel.core as pm
 
 
-class ValidateMeshHistory(publish.backend.plugin.Validator):
+class ValidateMeshHistory(pyblish.backend.plugin.Validator):
     """Check meshes for construction history"""
 
     @property

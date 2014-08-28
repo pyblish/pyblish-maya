@@ -3,14 +3,14 @@ import time
 import shutil
 import tempfile
 
-import publish.lib
-import publish.backend.plugin
+import pyblish.backend.lib
+import pyblish.backend.plugin
 
 from maya import cmds
 
 
-@publish.lib.log
-class ExtractReviewAsPng(publish.backend.plugin.Extractor):
+@pyblish.backend.lib.log
+class ExtractReviewAsPng(pyblish.backend.plugin.Extractor):
     """Extract family members as image-sequence (png)
 
     Some things are lacking; including setting shaded state
@@ -41,12 +41,12 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
         Step one is finding an appropriate panel to playblast from.
         The panel must be a valid "modelPanel", which means a 3d view.
         We modify the current camera of this panel to the one specified
-        in our publish, and then trigger a playblast. The next step is
-        restoring the previous panels and cameras so as to make the publish
+        in our pyblish, and then trigger a playblast. The next step is
+        restoring the previous panels and cameras so as to make the pyblish
         as transparent to the end-user as possible.
 
         ..note:: At the moment, if there is no active modelPanel,
-            the publish fails.
+            the pyblish fails.
 
         """
 
@@ -54,7 +54,7 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
 
         temp_dir = tempfile.mkdtemp()
 
-        compatible_instances = list(publish.backend.plugin.instances_by_plugin(
+        compatible_instances = list(pyblish.backend.plugin.instances_by_plugin(
             instances=context, plugin=self))
 
         # Get cameras
@@ -85,7 +85,7 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
         previous_panel = cmds.getPanel(withFocus=True)
 
         # If we're taking over a model panel, ensure we also
-        # restore the camera which was used at the time of publish.
+        # restore the camera which was used at the time of pyblish.
         if previous_panel in cmds.getPanel(type='modelPanel'):
             previous_camera = cmds.modelPanel(previous_panel,
                                               query=True,
@@ -168,7 +168,7 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
     def commit(self, path, family):
         """Move to timestamped destination relative workspace"""
 
-        date = time.strftime(publish.config.date_format)
+        date = time.strftime(pyblish.backend.config.date_format)
 
         workspace_dir = cmds.workspace(rootDirectory=True, query=True)
         if not workspace_dir:
@@ -176,7 +176,7 @@ class ExtractReviewAsPng(publish.backend.plugin.Extractor):
             # instead end up next to the working file.
             workspace_dir = cmds.workspace(dir=True, query=True)
         published_dir = os.path.join(workspace_dir,
-                                     publish.config.prefix,
+                                     pyblish.backend.config.prefix,
                                      family)
 
         commit_dir = os.path.join(published_dir, date)

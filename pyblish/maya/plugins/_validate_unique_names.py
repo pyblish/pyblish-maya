@@ -1,7 +1,7 @@
-import publish.backend.plugin
+import pyblish.backend.plugin
 
 
-class ValidateUniqueNames(publish.backend.plugin.Validator):
+class ValidateUniqueNames(pyblish.backend.plugin.Validator):
 
     @property
     def families(self):

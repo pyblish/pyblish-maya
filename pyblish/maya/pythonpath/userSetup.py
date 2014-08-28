@@ -1,11 +1,11 @@
 # Standard library
 import os
 
-# Publish libraries
-import publish.backend.plugin
+# Pyblish libraries
+import pyblish.backend.plugin
 
 # Local libraries
-import publishmaya
+import pyblish.maya
 
 # Host libraries
 from maya import mel
@@ -13,15 +13,15 @@ from maya import cmds
 
 
 # Register accompanying plugins
-package_path = os.path.dirname(publishmaya.__file__)
+package_path = os.path.dirname(pyblish.maya.__file__)
 plugin_path = os.path.join(package_path, 'plugins')
 
-publish.backend.plugin.register_plugin_path(plugin_path)
+pyblish.backend.plugin.register_plugin_path(plugin_path)
 print "Registered %s" % plugin_path
 
 
 def eval_append_to_filemenu():
-    """Add Publish to file-menu
+    """Add Pyblish to file-menu
 
     .. note:: We're going a bit hacky here, probably due to my lack
         of understanding for `evalDeferred` or `executeDeferred`,
@@ -35,21 +35,21 @@ def eval_append_to_filemenu():
     mel.eval("evalDeferred buildFileMenu")
 
     script = """
-import publish.main
+import pyblish.main
 
-cmds.menuItem('publishOpeningDivider',
+cmds.menuItem('pyblishOpeningDivider',
               divider=True,
               insertAfter='saveAsOptions',
               parent='mainFileMenu')
-cmds.menuItem('publishScene',
-              label='Publish',
-              insertAfter='publishOpeningDivider',
-              command=lambda _: publish.main.publish_all())
+cmds.menuItem('pyblishScene',
+              label='Pyblish',
+              insertAfter='pyblishOpeningDivider',
+              command=lambda _: pyblish.main.pyblish_all())
 cmds.menuItem('validateScene',
               label='Validate',
-              insertAfter='publishScene',
-              command=lambda _: publish.main.validate_all())
-cmds.menuItem('publishCloseDivider',
+              insertAfter='pyblishScene',
+              command=lambda _: pyblish.main.validate_all())
+cmds.menuItem('pyblishCloseDivider',
               divider=True,
               insertAfter='validateScene')
 

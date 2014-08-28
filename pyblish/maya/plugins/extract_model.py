@@ -3,14 +3,14 @@ import time
 import shutil
 import tempfile
 
-import publish.lib
-import publish.backend.plugin
+import pyblish.backend.lib
+import pyblish.backend.plugin
 
 from maya import cmds
 
 
-@publish.lib.log
-class ExtractModelAsMa(publish.backend.plugin.Extractor):
+@pyblish.backend.lib.log
+class ExtractModelAsMa(pyblish.backend.plugin.Extractor):
     """Extract family members of Model in Maya ASCII
 
     Attributes:
@@ -27,14 +27,14 @@ class ExtractModelAsMa(publish.backend.plugin.Extractor):
     def process(self, context):
         """Returns list of value and exception"""
 
-        compatible_instances = publish.backend.plugin.instances_by_plugin(
+        compatible_instances = pyblish.backend.plugin.instances_by_plugin(
             instances=context, plugin=self)
 
         for instance in compatible_instances:
             family = instance.config.get('family')
 
             temp_dir = tempfile.mkdtemp()
-            temp_file = os.path.join(temp_dir, 'publish')
+            temp_file = os.path.join(temp_dir, 'pyblish')
 
             self.log.info("Extracting locally..")
             previous_selection = cmds.ls(selection=True)
@@ -65,7 +65,7 @@ class ExtractModelAsMa(publish.backend.plugin.Extractor):
     def commit(self, path, family):
         """Move to timestamped destination relative workspace"""
 
-        date = time.strftime(publish.config.date_format)
+        date = time.strftime(pyblish.backend.config.date_format)
 
         workspace_dir = cmds.workspace(rootDirectory=True, query=True)
         if not workspace_dir:
@@ -73,7 +73,7 @@ class ExtractModelAsMa(publish.backend.plugin.Extractor):
             # instead end up next to the working file.
             workspace_dir = cmds.workspace(dir=True, query=True)
         published_dir = os.path.join(workspace_dir,
-                                     publish.config.prefix,
+                                     pyblish.backend.config.prefix,
                                      family)
 
         commit_dir = os.path.join(published_dir, date)
