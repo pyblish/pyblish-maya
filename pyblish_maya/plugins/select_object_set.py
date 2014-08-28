@@ -33,8 +33,8 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
                                                      allDescendents=True)
                     for descendent in descendents:
                         instance.add(descendent)
-                else:
-                    instance.add(node)
+
+                instance.add(node)
 
             attrs = cmds.listAttr(objset, userDefined=True)
             for attr in attrs:
