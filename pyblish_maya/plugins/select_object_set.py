@@ -24,7 +24,7 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
                               objectsOnly=True,
                               type='objectSet'):
 
-            instance = pyblish.backend.plugin.Instance(name=objset)
+            instance = context.create_instance(name=objset)
             self.log.info("Adding instance: {0}".format(objset))
 
             for node in cmds.sets(objset, query=True):

@@ -35,7 +35,7 @@ def eval_append_to_filemenu():
     mel.eval("evalDeferred buildFileMenu")
 
     script = """
-import pyblish.main
+import pyblish_maya.main
 
 cmds.menuItem('pyblishOpeningDivider',
               divider=True,
@@ -44,11 +44,11 @@ cmds.menuItem('pyblishOpeningDivider',
 cmds.menuItem('pyblishScene',
               label='Publish',
               insertAfter='pyblishOpeningDivider',
-              command=lambda _: pyblish.main.publish_all())
+              command=lambda _: pyblish_maya.main.publish_all())
 cmds.menuItem('validateScene',
               label='Validate',
               insertAfter='pyblishScene',
-              command=lambda _: pyblish.main.validate_all())
+              command=lambda _: pyblish_maya.main.validate_all())
 cmds.menuItem('pyblishCloseDivider',
               divider=True,
               insertAfter='validateScene')
