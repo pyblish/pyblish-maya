@@ -1,4 +1,4 @@
-# ![Maya-Publish][]
+# ![Pyblish Maya][]
 
 Autodesk Maya integration of Publish
 
