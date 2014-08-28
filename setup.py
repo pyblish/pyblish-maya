@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""This setup script packages pyblish.maya"""
+"""This setup script packages pyblish_maya"""
 
 from setuptools import setup, find_packages
 
@@ -13,7 +13,7 @@ with open('README.txt') as f:
 import os
 import imp
 
-version_file = os.path.abspath('pyblish/maya/version.py')
+version_file = os.path.abspath('pyblish_maya/version.py')
 version_mod = imp.load_source('version', version_file)
 version = version_mod.version
 
@@ -32,12 +32,11 @@ classifiers = [
 
 
 setup(
-    name='pyblish.maya',
-    namespace_packages=['pyblish'],
+    name='pyblish_maya',
     version=version,
     packages=find_packages(),
     package_dir={'pyblish': 'pyblish'},
-    url='https://github.com/abstractfactory/pyblish.maya',
+    url='https://github.com/abstractfactory/pyblish-maya',
     license='LGPL',
     author='Marcus Ottosson',
     author_email='marcus@abstractfactory.io',

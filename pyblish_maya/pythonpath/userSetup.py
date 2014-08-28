@@ -5,7 +5,7 @@ import os
 import pyblish.backend.plugin
 
 # Local libraries
-import pyblish.maya
+import pyblish_maya
 
 # Host libraries
 from maya import mel
@@ -13,7 +13,7 @@ from maya import cmds
 
 
 # Register accompanying plugins
-package_path = os.path.dirname(pyblish.maya.__file__)
+package_path = os.path.dirname(pyblish_maya.__file__)
 plugin_path = os.path.join(package_path, 'plugins')
 
 pyblish.backend.plugin.register_plugin_path(plugin_path)
@@ -42,9 +42,9 @@ cmds.menuItem('pyblishOpeningDivider',
               insertAfter='saveAsOptions',
               parent='mainFileMenu')
 cmds.menuItem('pyblishScene',
-              label='Pyblish',
+              label='Publish',
               insertAfter='pyblishOpeningDivider',
-              command=lambda _: pyblish.main.pyblish_all())
+              command=lambda _: pyblish.main.publish_all())
 cmds.menuItem('validateScene',
               label='Validate',
               insertAfter='pyblishScene',

@@ -11,27 +11,17 @@ class ValidateMutedChannels(pyblish.backend.plugin.Validator):
 
     """
 
-    @property
-    def families(self):
-        return ['model']
-
-    @property
-    def hosts(self):
-        return ['maya']
-
-    @property
-    def version(self):
-        return (0, 1, 0)
+    families = ['model']
+    hosts = ['maya']
+    version = (0, 1, 0)
 
     def process(self, context):
         """Look for nodes of type 'mute'"""
         mutes = cmds.ls(type='mute')
         if mutes:
-            raise ValueError("Muted nodes found")
-
-    def fix(self):
-        mutes = cmds.ls(type='mute')
-        cmds.delete(mutes)
+            yield None, ValueError("Muted nodes found")
+        else:
+            yield None, None
 
 
 if __name__ == '__main__':
