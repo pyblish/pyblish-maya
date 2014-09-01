@@ -61,19 +61,7 @@ class ExtractReviewAsPng(pyblish.backend.plugin.Extractor):
         cameras = list()
         for instance in compatible_instances:
             for node in instance:
-                self.log.debug("Looking for camera: {0}".format(node))
-
-                test_node = node
-                if cmds.nodeType(test_node) == 'transform':
-                    try:
-                        test_node = cmds.listRelatives(node, shapes=True)[0]
-                    except TypeError:
-                        # listRelatives returns None if no items are found
-                        # which causes a TypeError, as opposed to an IndexError
-                        # which is normally the case on empty lists.
-                        continue
-
-                if cmds.nodeType(test_node) == 'camera':
+                if cmds.nodeType(node) == 'camera':
                     cameras.append(node)
 
         if not cameras:
