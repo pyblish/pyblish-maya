@@ -25,6 +25,7 @@ class SelectTransform(pyblish.backend.plugin.Selector):
 
     def process(self, context):
         for transform in cmds.ls("*." + pyblish.backend.config.identifier,
+                                 recursive=True,
                                  objectsOnly=True,
                                  type='transform'):
 

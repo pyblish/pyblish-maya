@@ -21,6 +21,7 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
 
     def process(self, context):
         for objset in cmds.ls("*." + pyblish.backend.config.identifier,
+                              recursive=True,
                               objectsOnly=True,
                               type='objectSet'):
 
