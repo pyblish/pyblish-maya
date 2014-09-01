@@ -1,5 +1,4 @@
 import os
-import time
 import shutil
 import tempfile
 
@@ -31,8 +30,6 @@ class ExtractModelAsMa(pyblish.backend.plugin.Extractor):
             instances=context, plugin=self)
 
         for instance in compatible_instances:
-            family = instance.config.get('family')
-
             temp_dir = tempfile.mkdtemp()
             temp_file = os.path.join(temp_dir, 'pyblish')
 
@@ -42,7 +39,7 @@ class ExtractModelAsMa(pyblish.backend.plugin.Extractor):
             cmds.file(temp_file, type='mayaBinary', exportSelected=True)
 
             self.log.info("Moving extraction relative working file..")
-            output = self.commit(path=temp_dir, family=family)
+            output = self.commit(path=temp_dir, context=context)
 
             # Record where instance was extracted
             if not hasattr(instance, 'output_paths'):
@@ -61,23 +58,3 @@ class ExtractModelAsMa(pyblish.backend.plugin.Extractor):
             self.log.info("Extraction successful.")
 
             yield instance, None  # Value, Exception
-
-    def commit(self, path, family):
-        """Move to timestamped destination relative workspace"""
-
-        date = time.strftime(pyblish.backend.config.date_format)
-
-        workspace_dir = cmds.workspace(rootDirectory=True, query=True)
-        if not workspace_dir:
-            # Project has not been set. Files will
-            # instead end up next to the working file.
-            workspace_dir = cmds.workspace(dir=True, query=True)
-        published_dir = os.path.join(workspace_dir,
-                                     pyblish.backend.config.prefix,
-                                     family)
-
-        commit_dir = os.path.join(published_dir, date)
-
-        shutil.copytree(path, commit_dir)
-
-        return commit_dir
