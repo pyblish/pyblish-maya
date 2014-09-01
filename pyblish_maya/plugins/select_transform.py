@@ -1,9 +1,11 @@
+import pyblish.backend.lib
 import pyblish.backend.config
 import pyblish.backend.plugin
 
 import maya.cmds as cmds
 
 
+@pyblish.backend.lib.log
 class SelectTransform(pyblish.backend.plugin.Selector):
     """Select instances of node-type 'transform'
 
