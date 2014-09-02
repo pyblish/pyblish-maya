@@ -22,7 +22,7 @@ class SelectWorkspace(pyblish.backend.plugin.Selector):
         # Maya returns forward-slashes by default
         normalised = os.path.normpath(workspace)
 
-        context.set_data('workspace', value=normalised)
+        context.set_data('workspace_dir', value=normalised)
 
         yield None, None
 

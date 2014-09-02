@@ -1,5 +1,4 @@
 import os
-import shutil
 import tempfile
 
 import pyblish.backend.lib
@@ -31,30 +30,26 @@ class ExtractModelAsMa(pyblish.backend.plugin.Extractor):
 
         for instance in compatible_instances:
             temp_dir = tempfile.mkdtemp()
-            temp_file = os.path.join(temp_dir, 'pyblish')
+            temp_file = os.path.join(temp_dir, instance.data('name'))
 
-            self.log.info("Extracting locally..")
+            self.log.info("Extracting {0} locally..".format(instance))
             previous_selection = cmds.ls(selection=True)
             cmds.select(list(instance), replace=True)
-            cmds.file(temp_file, type='mayaBinary', exportSelected=True)
 
-            self.log.info("Moving extraction relative working file..")
-            output = self.commit(path=temp_dir, context=context)
+            try:
+                cmds.file(temp_file, type='mayaBinary', exportSelected=True)
 
-            # Record where instance was extracted
-            if not hasattr(instance, 'output_paths'):
-                instance.output_paths = list()
+            except Exception as exc:
+                yield instance, exc
 
-            instance.output_paths.append(output)
-
-            self.log.info("Clearing local cache..")
-            shutil.rmtree(temp_dir)
-
-            if previous_selection:
-                cmds.select(previous_selection, replace=True)
             else:
-                cmds.select(deselect=True)
+                self.commit(path=temp_dir, instance=instance)
 
-            self.log.info("Extraction successful.")
+                if previous_selection:
+                    cmds.select(previous_selection, replace=True)
+                else:
+                    cmds.select(deselect=True)
 
-            yield instance, None  # Value, Exception
+                self.log.info("Extraction successful.")
+
+                yield instance, None
