@@ -9,13 +9,8 @@ class ValidateReviewInstances(pyblish.backend.plugin.Validator):
 
     """
 
-    families = ['review']
+    families = ['demo.review']
     hosts = ['maya']
 
-    def process(self, context):
-        instances_by_plugin = pyblish.backend.plugin.instances_by_plugin
-        compatible_instances = instances_by_plugin(instances=context,
-                                                   plugin=self)
-        for instance in compatible_instances:
-            print "Running reviewvalidator on %s" % instance
-            yield instance, None
+    def process_instance(self, instance):
+        pass

@@ -19,7 +19,7 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
     hosts = ['maya']
     version = (0, 1, 0)
 
-    def process(self, context):
+    def process_context(self, context):
         for objset in cmds.ls("*." + pyblish.backend.config.identifier,
                               objectsOnly=True,
                               type='objectSet'):
@@ -46,11 +46,4 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
                 except:
                     continue
 
-                # Allow name to be overriden via attribute.
-                if attr == 'name':
-                    instance.name = value
-                    continue
-
-                instance.config[attr] = value
-
-            yield instance, None
+                instance.set_data(attr, value=value)

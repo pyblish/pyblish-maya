@@ -12,7 +12,7 @@ class SelectWorkspace(pyblish.backend.plugin.Selector):
     hosts = ['maya']
     version = (0, 1, 0)
 
-    def process(self, context):
+    def process_context(self, context):
         workspace = cmds.workspace(rootDirectory=True, query=True)
         if not workspace:
             # Project has not been set. Files will
@@ -23,22 +23,3 @@ class SelectWorkspace(pyblish.backend.plugin.Selector):
         normalised = os.path.normpath(workspace)
 
         context.set_data('workspace_dir', value=normalised)
-
-        yield None, None
-
-
-@pyblish.backend.lib.log
-class SelectCurrentFile(pyblish.backend.plugin.Selector):
-
-    hosts = ['maya']
-    version = (0, 1, 0)
-
-    def process(self, context):
-        """Todo, inject the current working file"""
-        current_file = cmds.file(sceneName=True, query=True)
-
-        # Maya returns forward-slashes by default
-        normalised = os.path.normpath(current_file)
-
-        context.set_data('current_file', value=normalised)
-        yield None, None
