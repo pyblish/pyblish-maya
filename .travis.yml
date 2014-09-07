@@ -8,7 +8,7 @@ deploy:
   user: mottosso
   distributions: "sdist"
   password:
-    secure: eTeJjM9nWt1IBIlLVdpZmCwy9KbNy91EG4VfJU4+Y7bWQ1OoBGAi8ijZ9twNq3tnQL1/KdLo/3w8fn4r0UopNug7IDQhGUFdzoq2vXMDUtvSqU5ol01jr4fPb51dIYtcJJRZJbjgcc7nNZyiZ6ybAFciouroPsraAlTWXgbWiv4=
+    secure: AoHC6MS/akzgmtrd+vgUg7FZ5bEzhdaqATa41k8aZfpYqavOue3a67ddyXV765+KsOkuluO8LzC9k5iRQx8KFGDaYtup5Uk4tfQEgWZgx1pk3xrSB8ZSQ7b6XbAvtljfx0gwBRY/2RHp6ByHEW/KJ3Zp0BCpwzyJ3pUS4Ig9OHY=
   on:
     tags: true
     all_branches: true
