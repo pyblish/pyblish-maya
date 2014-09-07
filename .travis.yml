@@ -1,0 +1,15 @@
+language: python
+python:
+- 2.7
+script:
+- pip install git+git://github.com/abstractfactory/pyblish-maya.git
+deploy:
+  provider: pypi
+  user: mottosso
+  distributions: "sdist"
+  password:
+    secure: eTeJjM9nWt1IBIlLVdpZmCwy9KbNy91EG4VfJU4+Y7bWQ1OoBGAi8ijZ9twNq3tnQL1/KdLo/3w8fn4r0UopNug7IDQhGUFdzoq2vXMDUtvSqU5ol01jr4fPb51dIYtcJJRZJbjgcc7nNZyiZ6ybAFciouroPsraAlTWXgbWiv4=
+  on:
+    tags: true
+    all_branches: true
+    repo: abstractfactory/pyblish-maya
