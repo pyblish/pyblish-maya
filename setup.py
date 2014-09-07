@@ -38,10 +38,14 @@ setup(
     package_dir={'pyblish': 'pyblish'},
     url='https://github.com/abstractfactory/pyblish-maya',
     license='LGPL',
-    author='Marcus Ottosson',
+    author='Abstract Factory and Contributors',
     author_email='marcus@abstractfactory.io',
-    description='maya pyblish package',
+    description='Maya Pyblish package',
     long_description=readme,
     zip_safe=False,
-    classifiers=classifiers
+    classifiers=classifiers,
+    package_data={
+        'pyblish_maya': ['plugins/*.py',
+                         'pythonpath/*.py']
+    },
 )
