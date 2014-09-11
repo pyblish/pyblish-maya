@@ -31,9 +31,11 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
     def process_context(self, context):
         for objset in cmds.ls("*." + pyblish.backend.config.identifier,
                               objectsOnly=True,
-                              type='objectSet'):
+                              type='objectSet',
+                              long=True):
 
-            instance = context.create_instance(name=objset)
+            name = cmds.ls(objset, long=False)
+            instance = context.create_instance(name=name)
             self.log.info("Adding instance: {0}".format(objset))
 
             for node in cmds.sets(objset, query=True):
