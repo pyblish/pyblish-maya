@@ -39,6 +39,7 @@ def add_to_filemenu():
     mel.eval("evalDeferred buildFileMenu")
 
     script = """
+from maya import cmds
 import pyblish.main
 
 cmds.menuItem('pyblishOpeningDivider',

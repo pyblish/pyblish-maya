@@ -7,12 +7,21 @@ import maya.cmds as cmds
 
 @pyblish.backend.lib.log
 class SelectObjectSet(pyblish.backend.plugin.Selector):
-    """Select instances of node-type 'transform'
+    """Identify publishable instances via an associated identifier
 
-    Opens up the doors for instances containing nodes of any type,
-    but lacks the ability to be nested with DAG nodes.
+    The identifier is located within the Pyblish configuration
+    as `pyblish.backend.config.identifier` and is typically something
+    like "publishable".
 
-    E.g.          -> /root/MyCharacter.publishable/an_object_set
+    Any node of type objectSet and containing this attribute will ba
+    deemed an instance capable of being published. Additionally,
+    the objectSet may contain a "family" attribute that will be
+    injected into the given instance.
+
+    Prerequisities:
+        INSTANCE is of type `objectSet`
+        Each INSTANCE MUST contain the attribute `publishable`
+        Each INSTANCE MUST contain the attribute `family`
 
     """
 
@@ -30,7 +39,8 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
             for node in cmds.sets(objset, query=True):
                 if cmds.nodeType(node) == 'transform':
                     descendents = cmds.listRelatives(node,
-                                                     allDescendents=True)
+                                                     allDescendents=True,
+                                                     fullPath=True)
                     for descendent in descendents:
                         instance.add(descendent)
 
