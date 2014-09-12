@@ -34,7 +34,7 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
                               type='objectSet',
                               long=True):
 
-            name = cmds.ls(objset, long=False)
+            name = cmds.ls(objset, long=False)[0]  # Use short name
             instance = context.create_instance(name=name)
             self.log.info("Adding instance: {0}".format(objset))
 
