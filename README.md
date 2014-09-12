@@ -1,16 +1,10 @@
-# ![Pyblish Maya][logo]
+### ![][logo]
 
 Autodesk Maya integration of Pyblish
 
-### Getting started
+- [Documentation][docs]
+- [Usergroup][usergroup]
 
-The Maya integration features a menu-item and a few example plugins of selectors, validators and extractors.
-
-```bash
-$ git clone https://github.com/abstractfactory/pyblish-maya.git
-```
-
-Finally, append [`publish-maya/publish_maya/pythonpath`][path] to your PYTHONPATH.
-
-[path]: https://github.com/abstractfactory/pyblish-maya/tree/master/pyblish_maya/pythonpath
+[usergroup]: https://groups.google.com/forum/#!forum/pyblish
+[docs]: https://github.com/abstractfactory/pyblish/wiki
 [logo]: https://github.com/abstractfactory/pyblish/wiki/images/maya-pyblish.png
