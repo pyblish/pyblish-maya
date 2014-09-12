@@ -6,5 +6,5 @@ Autodesk Maya integration of Pyblish
 - [Usergroup][usergroup]
 
 [usergroup]: https://groups.google.com/forum/#!forum/pyblish
-[docs]: https://github.com/abstractfactory/pyblish/wiki
+[docs]: https://github.com/abstractfactory/pyblish-maya/wiki
 [logo]: https://github.com/abstractfactory/pyblish/wiki/images/maya-pyblish.png
