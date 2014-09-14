@@ -8,6 +8,12 @@ from maya import cmds
 
 @pyblish.backend.lib.log
 class SelectCurrentFile(pyblish.backend.plugin.Selector):
+    """Inject the current working file into context
+
+    .. note:: This is mandatory for the supplied extractors
+    or else they will fail.
+
+    """
 
     hosts = ['maya']
     version = (0, 1, 0)

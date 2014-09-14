@@ -1,5 +1,6 @@
 # Standard library
 import os
+import inspect
 import logging
 
 # Pyblish libraries
@@ -38,30 +39,40 @@ def add_to_filemenu():
     # native mel function call.
     mel.eval("evalDeferred buildFileMenu")
 
-    script = """
-from maya import cmds
-import pyblish.main
-
-cmds.menuItem('pyblishOpeningDivider',
-            divider=True,
-            insertAfter='saveAsOptions',
-            parent='mainFileMenu')
-cmds.menuItem('pyblishScene',
-            label='Publish',
-            insertAfter='pyblishOpeningDivider',
-            command=lambda _: pyblish.main.publish_all())
-cmds.menuItem('validateScene',
-            label='Validate',
-            insertAfter='pyblishScene',
-            command=lambda _: pyblish.main.validate_all())
-cmds.menuItem('pyblishCloseDivider',
-            divider=True,
-            insertAfter='validateScene')
-
-    """
+    # Serialise function into string
+    script = inspect.getsource(_add_to_filemenu)
+    script += "\n_add_to_filemenu()"
 
     if hasattr(cmds, 'about') and not cmds.about(batch=True):
         # If cmds doesn't have any members, we're most likely in an
         # uninitialized batch-mode. It it does exists, ensure we
         # really aren't in batch mode.
         cmds.evalDeferred(script)
+
+
+def _add_to_filemenu():
+    """Helper function for the above :func:add_to_filemenu()
+
+    This function is serialised into a string and passed on
+    to evaliDeferred above.
+
+    """
+
+    from maya import cmds
+    import pyblish.main
+
+    cmds.menuItem('pyblishOpeningDivider',
+                  divider=True,
+                  insertAfter='saveAsOptions',
+                  parent='mainFileMenu')
+    cmds.menuItem('pyblishScene',
+                  label='Publish',
+                  insertAfter='pyblishOpeningDivider',
+                  command=lambda _: pyblish.main.publish_all())
+    cmds.menuItem('validateScene',
+                  label='Validate',
+                  insertAfter='pyblishScene',
+                  command=lambda _: pyblish.main.validate_all())
+    cmds.menuItem('pyblishCloseDivider',
+                  divider=True,
+                  insertAfter='validateScene')

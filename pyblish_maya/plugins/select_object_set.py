@@ -13,8 +13,8 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
     as `pyblish.backend.config.identifier` and is typically something
     like "publishable".
 
-    Any node of type objectSet and containing this attribute will ba
-    deemed an instance capable of being published. Additionally,
+    Any node of type objectSet containing this attribute will be
+    deemed an `Instance` capable of being published. Additionally,
     the objectSet may contain a "family" attribute that will be
     injected into the given instance.
 

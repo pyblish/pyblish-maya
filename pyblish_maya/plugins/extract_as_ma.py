@@ -26,7 +26,8 @@ class ExtractModelAsMa(pyblish.backend.plugin.Extractor):
         """Returns list of value and exception"""
 
         temp_dir = tempfile.mkdtemp()
-        temp_file = os.path.join(temp_dir, instance.data('name'))
+        temp_file = os.path.join(
+            temp_dir, instance.data('name') + ".ma")
 
         self.log.info("Extracting {0} locally..".format(instance))
         previous_selection = cmds.ls(selection=True)

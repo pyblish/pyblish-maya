@@ -8,6 +8,13 @@ from maya import cmds
 
 @pyblish.backend.lib.log
 class SelectWorkspace(pyblish.backend.plugin.Selector):
+    """Inject the current working file into context
+
+    .. note:: This is optional and used in the supplied extractors.
+        If present, the destination of files extracted will end up
+        relative this workspace.
+
+    """
 
     hosts = ['maya']
     version = (0, 1, 0)
