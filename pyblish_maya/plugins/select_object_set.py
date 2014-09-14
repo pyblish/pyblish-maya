@@ -30,6 +30,7 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
 
     def process_context(self, context):
         for objset in cmds.ls("*." + pyblish.backend.config.identifier,
+                              recursive=True,
                               objectsOnly=True,
                               type='objectSet',
                               long=True):
