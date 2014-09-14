@@ -1,4 +1,3 @@
 //Maya 2014 Project Definition
 
-workspace -fr "particles" "particles";
 workspace -fr "alembicCache" "cache/alembic";
