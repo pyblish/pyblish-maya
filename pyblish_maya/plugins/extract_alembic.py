@@ -1,6 +1,4 @@
 import os
-import time
-import shutil
 import tempfile
 
 import pyblish.backend.lib
@@ -21,22 +19,17 @@ class ExtractAlembic(pyblish.backend.plugin.Extractor):
 
     """
 
-    families = ['demo.model']
+    families = ['demo.alembic']
     hosts = ['maya']
     version = (0, 1, 0)
 
     def process_instance(self, instance):
-
-        #storing previous selection
-        previous_selection = cmds.ls(selection=True)
-
         #loading alembic plugin
         cmds.loadPlugin('AbcExport.mll', quiet=True)
         cmds.loadPlugin('AbcImport.mll', quiet=True)
 
         #create temp dir
         temp_dir = tempfile.mkdtemp()
-        print temp_dir
         fileName = instance.data('name').replace('|', '_')
         fileName = fileName.replace(':', '-')
         fileName += ".abc"
@@ -70,12 +63,3 @@ class ExtractAlembic(pyblish.backend.plugin.Extractor):
         mel.eval(melCmd)
 
         self.commit(path=temp_dir, instance=instance)
-'''
-        #restoring selection
-        if previous_selection:
-            cmds.select(previous_selection, replace=True)
-        else:
-            cmds.select(deselect=True)
-
-        self.log.info("Extraction successful.")
-'''
