@@ -1,0 +1,9 @@
+Pyblish Changelog
+=================
+
+This contains all major version changes between Pyblish releases.
+
+Version 1.0.1
+-------------
+
+- Renaming PyPI entry from pyblish_maya to pyblish-maya

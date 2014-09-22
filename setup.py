@@ -32,7 +32,7 @@ classifiers = [
 
 
 setup(
-    name='pyblish_maya',
+    name='pyblish-maya',
     version=version,
     packages=find_packages(),
     package_dir={'pyblish': 'pyblish'},
