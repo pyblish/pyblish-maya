@@ -1,16 +1,14 @@
-import pyblish.backend.lib
-import pyblish.backend.config
-import pyblish.backend.plugin
+import pyblish.api
 
 import maya.cmds as cmds
 
 
-@pyblish.backend.lib.log
-class SelectObjectSet(pyblish.backend.plugin.Selector):
+@pyblish.api.log
+class SelectObjectSet(pyblish.api.Selector):
     """Identify publishable instances via an associated identifier
 
     The identifier is located within the Pyblish configuration
-    as `pyblish.backend.config.identifier` and is typically something
+    as `pyblish.identifier` and is typically something
     like "publishable".
 
     Any node of type objectSet containing this attribute will be
@@ -29,7 +27,7 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
     version = (0, 1, 0)
 
     def process_context(self, context):
-        for objset in cmds.ls("*." + pyblish.backend.config.identifier,
+        for objset in cmds.ls("*." + pyblish.api.config['identifier'],
                               objectsOnly=True,
                               type='objectSet',
                               long=True):
@@ -50,7 +48,7 @@ class SelectObjectSet(pyblish.backend.plugin.Selector):
 
             attrs = cmds.listAttr(objset, userDefined=True)
             for attr in attrs:
-                if attr == pyblish.backend.config.identifier:
+                if attr == pyblish.api.config['identifier']:
                     continue
 
                 try:

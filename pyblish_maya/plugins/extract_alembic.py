@@ -1,15 +1,14 @@
 import os
 import tempfile
 
-import pyblish.backend.lib
-import pyblish.backend.plugin
+import pyblish.api
 
 from maya import cmds
 import maya.mel as mel
 
 
-@pyblish.backend.lib.log
-class ExtractAlembic(pyblish.backend.plugin.Extractor):
+@pyblish.api.log
+class ExtractAlembic(pyblish.api.Extractor):
     """Extract family members to Alembic format
 
     Attributes:

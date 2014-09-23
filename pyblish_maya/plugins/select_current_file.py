@@ -1,13 +1,12 @@
 import os
 
-import pyblish.backend.lib
-import pyblish.backend.plugin
+import pyblish.api
 
 from maya import cmds
 
 
-@pyblish.backend.lib.log
-class SelectCurrentFile(pyblish.backend.plugin.Selector):
+@pyblish.api.log
+class SelectCurrentFile(pyblish.api.Selector):
     """Inject the current working file into context
 
     .. note:: This is mandatory for the supplied extractors

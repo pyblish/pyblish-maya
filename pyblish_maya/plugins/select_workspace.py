@@ -1,13 +1,12 @@
 import os
 
-import pyblish.backend.lib
-import pyblish.backend.plugin
+import pyblish.api
 
 from maya import cmds
 
 
-@pyblish.backend.lib.log
-class SelectWorkspace(pyblish.backend.plugin.Selector):
+@pyblish.api.log
+class SelectWorkspace(pyblish.api.Selector):
     """Inject the current working file into context
 
     .. note:: This is optional and used in the supplied extractors.
