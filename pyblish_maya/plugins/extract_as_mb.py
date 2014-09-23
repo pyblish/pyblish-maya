@@ -1,14 +1,13 @@
 import os
 import tempfile
 
-import pyblish.backend.lib
-import pyblish.backend.plugin
+import pyblish.api
 
 from maya import cmds
 
 
-@pyblish.backend.lib.log
-class ExtractModelAsMb(pyblish.backend.plugin.Extractor):
+@pyblish.api.log
+class ExtractModelAsMb(pyblish.api.Extractor):
     """Extract family members of Model in Maya ASCII
 
     Attributes:

@@ -4,7 +4,7 @@ import inspect
 import logging
 
 # Pyblish libraries
-import pyblish.backend.plugin
+import pyblish.api
 
 # Integration libraries
 import pyblish_maya
@@ -21,7 +21,7 @@ def register_plugins():
     package_path = os.path.dirname(pyblish_maya.__file__)
     plugin_path = os.path.join(package_path, 'plugins')
 
-    pyblish.backend.plugin.register_plugin_path(plugin_path)
+    pyblish.api.register_plugin_path(plugin_path)
     log.info("Registered %s" % plugin_path)
 
 
