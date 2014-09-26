@@ -54,7 +54,7 @@ def _add_to_filemenu():
     """Helper function for the above :func:add_to_filemenu()
 
     This function is serialised into a string and passed on
-    to evaliDeferred above.
+    to evalDeferred above.
 
     """
 
