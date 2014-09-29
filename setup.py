@@ -40,7 +40,7 @@ setup(
     license='LGPL',
     author='Abstract Factory and Contributors',
     author_email='marcus@abstractfactory.io',
-    description='Maya Pyblish package',
+    description='Maya integration of Pyblish',
     long_description=readme,
     zip_safe=False,
     classifiers=classifiers,
