@@ -1,5 +1,6 @@
 language: python
 python:
+- 2.6
 - 2.7
 script:
 - pip install git+git://github.com/abstractfactory/pyblish-maya.git
