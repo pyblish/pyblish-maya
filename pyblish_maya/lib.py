@@ -2,6 +2,7 @@
 import os
 import inspect
 import logging
+import contextlib
 
 # Pyblish libraries
 import pyblish.api
@@ -16,6 +17,31 @@ from maya import cmds
 log = logging.getLogger('pyblish')
 
 
+@contextlib.contextmanager
+def maintained_selection():
+    """Maintain selection during context
+
+    Example:
+        >>> with maintained_selection():
+        ...     # Modify selection
+        ...     cmds.select('node', replace=True)
+        >>> # Selection restored
+
+    """
+
+    previous_selection = cmds.ls(selection=True)
+    try:
+        yield
+    finally:
+        if previous_selection:
+            cmds.select(previous_selection,
+                        replace=True,
+                        noExpand=True)
+        else:
+            cmds.select(deselect=True,
+                        noExpand=True)
+
+
 def register_plugins():
     # Register accompanying plugins
     package_path = os.path.dirname(pyblish_maya.__file__)
@@ -23,6 +49,20 @@ def register_plugins():
 
     pyblish.api.register_plugin_path(plugin_path)
     log.info("Registered %s" % plugin_path)
+
+
+def register_gui(gui):
+    """Register GUI
+
+    Inform Maya that there is a GUI for Pyblish.
+
+    Arguments:
+        gui (str): Name of callable python package/module
+
+    """
+
+    assert isinstance(gui, basestring)
+    pyblish_maya.gui = gui
 
 
 def add_to_filemenu():
@@ -59,20 +99,46 @@ def _add_to_filemenu():
     """
 
     from maya import cmds
-    import pyblish.main
+
+    def filemenu_handler(event):
+        import pyblish.main
+
+        if event == "publish":
+            pyblish.main.publish_all()
+
+        if event == "gui":
+            pyblish_maya.launch_gui()
+
+        if event == "validate":
+            pyblish.main.validate_all()
 
     cmds.menuItem('pyblishOpeningDivider',
                   divider=True,
                   insertAfter='saveAsOptions',
                   parent='mainFileMenu')
     cmds.menuItem('pyblishScene',
-                  label='Publish',
                   insertAfter='pyblishOpeningDivider',
-                  command=lambda _: pyblish.main.publish_all())
+                  label='Publish',
+                  command=lambda _: filemenu_handler("publish"))
+
+    if pyblish_maya.gui is not None:
+        cmds.menuItem('pyblishGui',
+                      optionBox=True,
+                      insertAfter="pyblishScene",
+                      command=lambda _: filemenu_handler("gui"))
+
     cmds.menuItem('validateScene',
                   label='Validate',
                   insertAfter='pyblishScene',
-                  command=lambda _: pyblish.main.validate_all())
+                  command=lambda _: filemenu_handler("validate"))
     cmds.menuItem('pyblishCloseDivider',
-                  divider=True,
-                  insertAfter='validateScene')
+                  insertAfter='validateScene',
+                  divider=True)
+
+
+def launch_gui():
+    if not pyblish_maya.gui:
+        raise ValueError("No GUI registered")
+
+    import subprocess
+    subprocess.Popen(["python", pyblish_maya.gui])
