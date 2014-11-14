@@ -1,3 +1,5 @@
+import os
+import random
 
 INTEGRATION = False
 ENDPOINT = False
@@ -23,14 +25,21 @@ if INTEGRATION:
 
     if ENDPOINT:
         # Listen for externally running interfaces
-        pyblish_endpoint.server.start(service=pyblish_maya.EndpointService)
+        port = random.randint(6000, 7000)
+        pyblish_endpoint.server.start(
+            service=pyblish_maya.EndpointService,
+            port=port)
+
+        # Store reference to port for frontend(s)
+        os.environ["ENDPOINT_PORT"] = str(port)
 
         try:
             import pyblish_qml
-            pyblish_maya.register_gui("pyblish_qml")
-            print "Registing QML GUI"
         except ImportError:
             pass
+        else:
+            pyblish_maya.register_gui("pyblish_qml")
+            print "Registing QML GUI"
 
         print "Pyblish Endpoint started.."
 

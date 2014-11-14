@@ -140,5 +140,11 @@ def launch_gui():
     if not pyblish_maya.gui:
         raise ValueError("No GUI registered")
 
-    import subprocess
-    subprocess.Popen(["python", pyblish_maya.gui])
+    if not "ENDPOINT_PORT" in os.environ:
+        raise ValueError("Pyblish start-up script doesn't seem to "
+                         "have been run, could not find the PORT variable")
+
+    host = "Maya"
+    port = os.environ["ENDPOINT_PORT"]
+    gui = __import__(pyblish_maya.gui)
+    gui.run(host, port, async=True)
