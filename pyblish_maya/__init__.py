@@ -7,6 +7,8 @@ from . import service
 
 gui = None
 
+show = lib.show
+
 
 def setup():
     """Setup integration"""
