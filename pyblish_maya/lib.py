@@ -1,8 +1,10 @@
 # Standard library
 import os
+import atexit
 import inspect
 import logging
 import contextlib
+import subprocess
 
 # Pyblish libraries
 import pyblish.api
@@ -107,7 +109,7 @@ def _add_to_filemenu():
             pyblish.main.publish_all()
 
         if event == "gui":
-            pyblish_maya.launch_gui()
+            pyblish_maya.show()
 
         if event == "validate":
             pyblish.main.validate_all()
@@ -136,9 +138,25 @@ def _add_to_filemenu():
                   divider=True)
 
 
-def launch_gui():
+def show(console=False):
     if not pyblish_maya.gui:
         raise ValueError("No GUI registered")
 
-    import subprocess
-    subprocess.Popen(["python", pyblish_maya.gui])
+    if not "ENDPOINT_PORT" in os.environ:
+        raise ValueError("Pyblish start-up script doesn't seem to "
+                         "have been run, could not find the PORT variable")
+
+    host = "Maya"
+    port = os.environ["ENDPOINT_PORT"]
+
+    CREATE_NO_WINDOW = 0x08000000
+    proc = subprocess.Popen(["python", "-m", "pyblish_qml.app",
+                             "--host", host,
+                             "--port", str(port)],
+                            creationflags=CREATE_NO_WINDOW if not console else 0)
+
+    # Kill child process on Maya exit
+    def kill_child():
+        proc.kill()
+
+    atexit.register(kill_child)
