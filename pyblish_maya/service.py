@@ -1,7 +1,7 @@
 
 # Dependencies
 import pyblish_endpoint.service
-from version import version
+from .version import version
 
 from maya import utils
 
