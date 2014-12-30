@@ -23,7 +23,6 @@ from maya import mel
 from maya import cmds
 
 # Local libraries
-from . import service
 from . import plugins
 
 GUI = None
@@ -86,6 +85,8 @@ def has_frontend():
 
 
 def setup_endpoint():
+    from . import service
+
     import pyblish_endpoint.server
     import pyblish_endpoint.service
 
