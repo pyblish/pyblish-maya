@@ -3,14 +3,14 @@ python:
 - 2.6
 - 2.7
 script:
-- pip install git+git://github.com/abstractfactory/pyblish-maya.git
+- pip install git+git://github.com/pyblish/pyblish-maya.git
 deploy:
   provider: pypi
   user: mottosso
   distributions: "sdist"
   password:
-    secure: AoHC6MS/akzgmtrd+vgUg7FZ5bEzhdaqATa41k8aZfpYqavOue3a67ddyXV765+KsOkuluO8LzC9k5iRQx8KFGDaYtup5Uk4tfQEgWZgx1pk3xrSB8ZSQ7b6XbAvtljfx0gwBRY/2RHp6ByHEW/KJ3Zp0BCpwzyJ3pUS4Ig9OHY=
+    secure: e6aTFKGHyKDbaBME8MGuACBcV/65sIpsZ1QVSoLHt/QfxmhjEe+cJjSei1RAh5aNOYcJacgrkEfIwQHzB9Rvigysy9aJfUrwDeaxE8aL8ut87eh9iiCM7daAfBzjI/CuhDF1uqb+wNUDl0EfAV0o8+kRVjiCoj72iBCktdPqiro=
   on:
     tags: true
     all_branches: true
-    repo: abstractfactory/pyblish-maya
+    repo: pyblish/pyblish-maya
