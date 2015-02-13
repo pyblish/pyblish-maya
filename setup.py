@@ -47,5 +47,7 @@ setup(
         'pyblish_maya': ['plugins/*.py',
                          'pythonpath/*.py']
     },
-    install_requires=["pyblish>=1.0.11"]
+    install_requires=["pyblish>=1.0.11",
+                      "pyblish-endpoint>=1.1.0",
+                      "pyblish-qml>=0.2.0"]
 )

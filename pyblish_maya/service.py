@@ -11,9 +11,9 @@ class MayaService(pyblish_endpoint.service.EndpointService):
         return utils.executeInMainThreadWithResult(
             super(MayaService, self).init, *args, **kwargs)
 
-    def process(self, *args, **kwargs):
+    def next(self, *args, **kwargs):
         return utils.executeInMainThreadWithResult(
-            super(MayaService, self).process, *args, **kwargs)
+            super(MayaService, self).next, *args, **kwargs)
 
     def versions(self):
         versions = super(MayaService, self).versions()
