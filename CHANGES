@@ -3,6 +3,16 @@ pyblish-maya Changelog
 
 This contains all major version changes between pyblish-maya releases.
 
+Version 1.0.9
+-------------
+
+Added compatibility with pyblish_endpoint=1.1.0
+
+Version 1.0.8
+-------------
+
+Added dependency to Pyblish core library
+
 Version 1.0.7
 -------------
 
