@@ -35,7 +35,7 @@ setup(
     version=version,
     packages=find_packages(),
     package_dir={'pyblish': 'pyblish'},
-    url='https://github.com/abstractfactory/pyblish-maya',
+    url='https://github.com/pyblish/pyblish-maya',
     license='LGPL',
     author='Abstract Factory and Contributors',
     author_email='marcus@abstractfactory.io',
