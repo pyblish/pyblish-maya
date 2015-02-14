@@ -9,8 +9,7 @@ deploy:
   user: mottosso
   distributions: "sdist"
   password:
-    secure: Glkhi1myBStgOFjWjhr3r0NJe1+PlDOu60yShMIsxxeYbm0TIs9TSjh2aMqAfqXQFh+ME3KBP97V+ERgqsbKTJxxvjaVH8PjHZSzLR1z3ttw0wh/4O8zwiaGX8FZYMUkIEId6keuedqNMnIgkC7cXCOzNi83NSUbb9miAPgKb8Q=
+    secure: Fh1WVRRn/xAiYDBycQyRqSPet8KQpNCWYhGVEoO2IOxbjR2G+P1BG1rlzDNNPIaccsQhaVuZiaDw/PZNqukNveWHwD1EpAk6IrOCWuYN+GSCM5DJf3KtO8U6D1k0ihAKcAdC48+5Gx8VtmLyiTEXPvsHQhPDGIWvbgZIVdDqIBk=
   on:
     tags: true
     all_branches: true
-    repo: pyblish/pyblish-maya
