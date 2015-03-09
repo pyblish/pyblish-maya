@@ -1,18 +1,13 @@
-"""
-Pyblish for Maya
+"""Pyblish for Maya
 
 Attributes:
-    GUI: Which GUI to associate with the option-box within Maya's file-menu.
     log: Current logger
 
 """
 
 import os
-import atexit
-import random
 import logging
 import inspect
-import threading
 import subprocess
 
 # Pyblish libraries
@@ -23,124 +18,132 @@ from maya import mel
 from maya import cmds
 
 # Local libraries
+from . import lib
 from . import plugins
 
-GUI = None
 log = logging.getLogger('pyblish')
 
+cached_process = None
 
-def show(console=False):
-    if not GUI:
-        raise ValueError("No GUI registered")
 
-    if not "ENDPOINT_PORT" in os.environ:
+def show(console=False, prefer_cached=True):
+    """Show the Pyblish graphical user interface
+
+    An interface may already have been loaded; if that's the
+    case, we favour it to launching a new unless `prefer_cached`
+    is False.
+
+    """
+
+    if cached_process and prefer_cached:
+        return _show_cached()
+    return _show_new(console)
+
+
+def _show_cached():
+    """Display cached gui
+
+    A GUI is cached upon first being shown, or when pre-loaded.
+
+    """
+
+    import pyblish_endpoint.client
+
+    pyblish_endpoint.client.request("show")
+
+    return cached_process
+
+
+def _show_new(console=False):
+    """Create and display a new instance of the Pyblish QML GUI"""
+    try:
+        port = os.environ["ENDPOINT_PORT"]
+    except KeyError:
         raise ValueError("Pyblish start-up script doesn't seem to "
                          "have been run, could not find the PORT variable")
 
-    host = "Maya"
-    port = os.environ["ENDPOINT_PORT"]
+    kwargs = dict(args=["python", "-m", "pyblish_qml",
+                        "--port", str(port), "--pid", os.getpid()])
 
-    CREATE_NO_WINDOW = 0x08000000
-    proc = subprocess.Popen(["python", "-m", "pyblish_qml.app",
-                             "--host", host,
-                             "--port", str(port)],
-                            creationflags=CREATE_NO_WINDOW if not console else 0)
+    if not console and os.name == "nt":
+        kwargs["creationflags"] = lib.CREATE_NO_WINDOW
 
-    # Kill child process on Maya exit
-    def kill_child():
-        proc.kill()
+    log.info("Creating a new instance of Pyblish QML")
+    proc = subprocess.Popen(**kwargs)
 
-    atexit.register(kill_child)
+    global cached_process
+    cached_process = proc
 
-
-def setup():
-    """Setup integration"""
-    # Underscore prevents makes it less visible from within Maya
-
-    if has_endpoint() and has_frontend():
-        setup_endpoint()
-        setup_frontend()
-        print "pyblish: Setting up frontend"
-    else:
-        pass
-
-    setup_integration()
+    return proc
 
 
-def has_endpoint():
+def setup(preload=True):
+    """Setup integration
+
+    Registers Pyblish for Maya plug-ins and appends an item to the File-menu
+
+    """
+
+    register_plugins()
+
     try:
-        __import__("pyblish_endpoint.server")
-        __import__("pyblish_endpoint.service")
-    except ImportError:
-        return False
-    return True
+        port = setup_endpoint()
+
+        if preload:
+            pid = os.getpid()
+            preload_(port, pid)
+
+    except:
+        log.info("pyblish: Running headless")
+
+    add_to_filemenu()
+
+    log.info("pyblish: Integration loaded..")
 
 
-def has_frontend():
-    try:
-        __import__("pyblish_qml")
-    except ImportError:
-        return False
-    return True
+def preload_(port, pid=None):
+    pid = os.getpid()
+
+    kwargs = dict(args=["python", "-m", "pyblish_qml",
+                        "--port", str(port), "--pid", str(pid),
+                        "--preload"])
+
+    if os.name == "nt":
+        kwargs["creationflags"] = lib.CREATE_NO_WINDOW
+
+    proc = subprocess.Popen(**kwargs)
+
+    global cached_process
+    cached_process = proc
+
+    return proc
 
 
 def setup_endpoint():
-    from . import service
+    """Start Endpoint
 
-    import pyblish_endpoint.server
-    import pyblish_endpoint.service
+    Raises:
+        ImportError: If Pyblish Endpoint is not available
 
-    # Listen for externally running interfaces
-    port = random.randint(6000, 7000)
+    """
 
-    def server():
-        pyblish_endpoint.server.start_production_server(
-            service=service.MayaService,
-            port=port)
+    from service import MayaService
+    from pyblish_endpoint import server
 
-    worker = threading.Thread(target=server)
-    worker.daemon = True
-    worker.start()
-
-    # Store reference to port for frontend(s)
+    port = lib.find_next_port()
+    server.start_async_production_server(service=MayaService, port=port)
     os.environ["ENDPOINT_PORT"] = str(port)
 
-    print "pyblish: Endpoint running @ %i" % port
+    log.info("pyblish: Endpoint running @ %i" % port)
 
-
-def setup_frontend():
-    register_gui("pyblish_qml")
-
-
-def setup_integration():
-    register_plugins()
-
-    # If a frontend is installed, it will be added
-    # to the menu as an option-box.
-    add_to_filemenu()
-    print "pyblish: Integration loaded.."
+    return port
 
 
 def register_plugins():
     # Register accompanying plugins
     plugin_path = os.path.dirname(plugins.__file__)
     pyblish.api.register_plugin_path(plugin_path)
-    log.info("Registered %s" % plugin_path)
-
-
-def register_gui(gui):
-    """Register GUI
-
-    Inform Maya that there is a GUI for Pyblish.
-
-    Arguments:
-        gui (str): Name of callable python package/module
-
-    """
-
-    assert isinstance(gui, basestring)
-    global GUI
-    GUI = gui
+    log.info("pyblish: Registered %s" % plugin_path)
 
 
 def add_to_filemenu():
@@ -185,13 +188,13 @@ def _add_to_filemenu():
     import pyblish_maya
 
     def filemenu_handler(event):
-        import pyblish.main
 
         if event == "publish":
-            pyblish.main.publish_all()
-
-        if event == "gui":
-            pyblish_maya.show()
+            try:
+                pyblish_maya.show()
+            except:
+                import pyblish.main
+                pyblish.main.publish_all()
 
         if event == "validate":
             pyblish.main.validate_all()
@@ -200,21 +203,17 @@ def _add_to_filemenu():
                   divider=True,
                   insertAfter='saveAsOptions',
                   parent='mainFileMenu')
+
     cmds.menuItem('pyblishScene',
                   insertAfter='pyblishOpeningDivider',
                   label='Publish',
                   command=lambda _: filemenu_handler("publish"))
 
-    if pyblish_maya.GUI is not None:
-        cmds.menuItem('pyblishGui',
-                      optionBox=True,
-                      insertAfter="pyblishScene",
-                      command=lambda _: filemenu_handler("gui"))
-
     cmds.menuItem('validateScene',
                   label='Validate',
                   insertAfter='pyblishScene',
                   command=lambda _: filemenu_handler("validate"))
+
     cmds.menuItem('pyblishCloseDivider',
                   insertAfter='validateScene',
                   divider=True)
