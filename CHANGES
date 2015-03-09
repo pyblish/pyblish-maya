@@ -3,6 +3,11 @@ pyblish-maya Changelog
 
 This contains all major version changes between pyblish-maya releases.
 
+Version 1.0.10
+--------------
+
+- Added support for Pyblish QML pre-loading
+
 Version 1.0.9
 -------------
 
