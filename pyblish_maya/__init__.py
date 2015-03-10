@@ -29,8 +29,14 @@ def show(console=False, prefer_cached=True):
 
     """
 
+    global cached_process
+
     if cached_process and prefer_cached:
-        return _show_cached()
+        still_running = cached_process.poll() is None
+        if still_running:
+            return _show_cached()
+        else:
+            cached_process = None
     return _show_new(console)
 
 
