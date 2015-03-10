@@ -64,7 +64,7 @@ def _show_new(console=False):
 
     pid = os.getpid()
     kwargs = dict(args=["python", "-m", "pyblish_qml",
-                        "--port", port, "--pid", pid])
+                        "--port", port, "--pid", str(pid)])
 
     if not console and os.name == "nt":
         kwargs["creationflags"] = lib.CREATE_NO_WINDOW
