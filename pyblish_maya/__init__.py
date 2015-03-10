@@ -1,12 +1,4 @@
-"""Pyblish for Maya
-
-Attributes:
-    log: Current logger
-
-"""
-
 import os
-import logging
 import inspect
 import subprocess
 
@@ -21,9 +13,11 @@ from maya import cmds
 from . import lib
 from . import plugins
 
-log = logging.getLogger('pyblish')
-
 cached_process = None
+
+
+def echo(text):
+    print text
 
 
 def show(console=False, prefer_cached=True):
@@ -69,7 +63,7 @@ def _show_new(console=False):
     if not console and os.name == "nt":
         kwargs["creationflags"] = lib.CREATE_NO_WINDOW
 
-    log.info("Creating a new instance of Pyblish QML")
+    echo("Creating a new instance of Pyblish QML")
     proc = subprocess.Popen(**kwargs)
 
     global cached_process
@@ -95,11 +89,11 @@ def setup(preload=True):
             preload_(port, pid)
 
     except:
-        log.info("pyblish: Running headless")
+        echo("pyblish: Running headless")
 
     add_to_filemenu()
 
-    log.info("pyblish: Integration loaded..")
+    echo("pyblish: Integration loaded..")
 
 
 def preload_(port, pid=None):
@@ -135,7 +129,7 @@ def setup_endpoint():
     server.start_async_production_server(service=MayaService, port=port)
     os.environ["ENDPOINT_PORT"] = str(port)
 
-    log.info("pyblish: Endpoint running @ %i" % port)
+    echo("pyblish: Endpoint running @ %i" % port)
 
     return port
 
@@ -144,7 +138,7 @@ def register_plugins():
     # Register accompanying plugins
     plugin_path = os.path.dirname(plugins.__file__)
     pyblish.api.register_plugin_path(plugin_path)
-    log.info("pyblish: Registered %s" % plugin_path)
+    echo("pyblish: Registered %s" % plugin_path)
 
 
 def add_to_filemenu():
