@@ -62,8 +62,9 @@ def _show_new(console=False):
         raise ValueError("Pyblish start-up script doesn't seem to "
                          "have been run, could not find the PORT variable")
 
+    pid = os.getpid()
     kwargs = dict(args=["python", "-m", "pyblish_qml",
-                        "--port", str(port), "--pid", os.getpid()])
+                        "--port", port, "--pid", pid])
 
     if not console and os.name == "nt":
         kwargs["creationflags"] = lib.CREATE_NO_WINDOW
@@ -179,12 +180,14 @@ def _add_to_filemenu():
 
     """
 
+    import sys
     from maya import cmds
 
     # We'll need to re-import here, due to this being called
     # in a deferred call by Maya during idle, it won't have access
     # to other variables declared in this module.
     import pyblish
+    import pyblish.main
     import pyblish_maya
 
     def filemenu_handler(event):
@@ -192,8 +195,11 @@ def _add_to_filemenu():
         if event == "publish":
             try:
                 pyblish_maya.show()
-            except:
-                import pyblish.main
+            except Exception as e:
+                sys.stderr.write("Tried launching GUI, but failed.\n")
+                sys.stderr.write("Message was: %s\n" % e)
+                sys.stderr.write("Publishing in headless mode instead.\n")
+
                 pyblish.main.publish_all()
 
         if event == "validate":
