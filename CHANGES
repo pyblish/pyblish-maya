@@ -3,6 +3,14 @@ pyblish-maya Changelog
 
 This contains all major version changes between pyblish-maya releases.
 
+Version 1.0.11
+--------------
+
+- Added compatibility with pyblish_endpoint=1.1.5
+- Added environment variable PYBLISH_QML_CONSOLE to display
+    console window for Pyblish QML.
+- Refactoring
+
 Version 1.0.10
 --------------
 
