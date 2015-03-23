@@ -12,6 +12,7 @@ Attributes:
 import os
 import random
 import inspect
+import traceback
 import subprocess
 import contextlib
 
@@ -214,9 +215,14 @@ def _add_to_filemenu():
         if event == "publish":
             try:
                 pyblish_maya.show()
-            except Exception as e:
+            except:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                message = "".join(traceback.format_exception(
+                    exc_type, exc_value, exc_traceback))
+
                 sys.stderr.write("Tried launching GUI, but failed.\n")
-                sys.stderr.write("Message was: %s\n" % e)
+                sys.stderr.write("Message was:")
+                sys.stderr.write(message)
                 sys.stderr.write("Publishing in headless mode instead.\n")
 
                 pyblish.main.publish_all()
