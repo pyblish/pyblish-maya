@@ -207,7 +207,13 @@ def _add_to_filemenu():
     # in a deferred call by Maya during idle, it won't have access
     # to other variables declared in this module.
     import pyblish
-    import pyblish.main
+
+    try:
+        # Backwards compatibility
+        import pyblish.main as util
+    except:
+        from pyblish import util
+
     import pyblish_maya
 
     def filemenu_handler(event):
@@ -225,10 +231,10 @@ def _add_to_filemenu():
                 sys.stderr.write(message)
                 sys.stderr.write("Publishing in headless mode instead.\n")
 
-                pyblish.main.publish_all()
+                util.publish_all()
 
         if event == "validate":
-            pyblish.main.validate_all()
+            util.validate_all()
 
     cmds.menuItem('pyblishOpeningDivider',
                   divider=True,
