@@ -14,3 +14,7 @@ class MayaService(pyblish_endpoint.service.EndpointService):
     def process(self, *args, **kwargs):
         orig = super(MayaService, self).process
         return wrapper(orig, *args, **kwargs)
+
+    def repair(self, *args, **kwargs):
+        orig = super(MayaService, self).repair
+        return wrapper(orig, *args, **kwargs)

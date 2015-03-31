@@ -10,6 +10,7 @@ Attributes:
 
 # Standard library
 import os
+import sys
 import random
 import inspect
 import traceback
@@ -96,12 +97,19 @@ def _show_new(console=False):
     return proc
 
 
-def setup(preload=True):
+def setup(preload=True, console=True):
     """Setup integration
 
     Registers Pyblish for Maya plug-ins and appends an item to the File-menu
 
+    Attributes:
+        preload (bool): Preload the current GUI
+        console (bool): Display console with GUI
+
     """
+
+    if console:
+        os.environ[PYBLISH_QML_CONSOLE] = "1"
 
     register_plugins()
 
@@ -112,8 +120,11 @@ def setup(preload=True):
             pid = os.getpid()
             preload_(port, pid)
 
-    except Exception as e:
-        print e
+    except:
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        message = "".join(traceback.format_exception(
+            exc_type, exc_value, exc_traceback))
+        echo(message)
         echo("pyblish: Running headless")
 
     add_to_filemenu()
@@ -207,7 +218,13 @@ def _add_to_filemenu():
     # in a deferred call by Maya during idle, it won't have access
     # to other variables declared in this module.
     import pyblish
-    import pyblish.main
+
+    try:
+        from pyblish import util
+    except:
+        # Backwards compatibility
+        import pyblish.main as util
+
     import pyblish_maya
 
     def filemenu_handler(event):
@@ -225,10 +242,10 @@ def _add_to_filemenu():
                 sys.stderr.write(message)
                 sys.stderr.write("Publishing in headless mode instead.\n")
 
-                pyblish.main.publish_all()
+                util.publish_all()
 
         if event == "validate":
-            pyblish.main.validate_all()
+            util.validate_all()
 
     cmds.menuItem('pyblishOpeningDivider',
                   divider=True,
