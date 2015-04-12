@@ -8,7 +8,7 @@ from maya import cmds
 
 @pyblish.api.log
 class ExtractModelAsMb(pyblish.api.Extractor):
-    """Extract family members of Model in Maya ASCII
+    """Extract family members of Model in Maya BINARY
 
     Attributes:
         families: The extractor is triggered upon families of "model"
