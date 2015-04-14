@@ -25,3 +25,6 @@ class SelectCurrentFile(pyblish.api.Selector):
         normalised = os.path.normpath(current_file)
 
         context.set_data('currentFile', value=normalised)
+
+        # For backwards compatibility
+        context.set_data('current_file', value=normalised)
