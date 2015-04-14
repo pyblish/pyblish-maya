@@ -3,6 +3,13 @@ pyblish-maya Changelog
 
 This contains all major version changes between pyblish-maya releases.
 
+Version 1.0.13
+--------------
+
+- API: Changed data members current_file -> currentFile and
+    workspace_dir -> workspaceDir. This is a breaking change,
+    make sure to update your plug-ins to use the new names.
+
 Version 1.0.12
 --------------
 

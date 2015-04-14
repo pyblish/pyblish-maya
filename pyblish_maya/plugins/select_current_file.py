@@ -24,4 +24,4 @@ class SelectCurrentFile(pyblish.api.Selector):
         # Maya returns forward-slashes by default
         normalised = os.path.normpath(current_file)
 
-        context.set_data('current_file', value=normalised)
+        context.set_data('currentFile', value=normalised)
