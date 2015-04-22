@@ -242,10 +242,7 @@ def _add_to_filemenu():
                 sys.stderr.write(message)
                 sys.stderr.write("Publishing in headless mode instead.\n")
 
-                util.publish_all()
-
-        if event == "validate":
-            util.validate_all()
+                util.publish()
 
     cmds.menuItem('pyblishOpeningDivider',
                   divider=True,
@@ -257,13 +254,8 @@ def _add_to_filemenu():
                   label='Publish',
                   command=lambda _: filemenu_handler("publish"))
 
-    cmds.menuItem('validateScene',
-                  label='Validate',
-                  insertAfter='pyblishScene',
-                  command=lambda _: filemenu_handler("validate"))
-
     cmds.menuItem('pyblishCloseDivider',
-                  insertAfter='validateScene',
+                  insertAfter='pyblishScene',
                   divider=True)
 
 
