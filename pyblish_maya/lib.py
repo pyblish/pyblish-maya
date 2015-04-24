@@ -97,7 +97,7 @@ def _show_new(console=False):
     return proc
 
 
-def setup(preload=True, console=True):
+def setup(preload=True, console=False):
     """Setup integration
 
     Registers Pyblish for Maya plug-ins and appends an item to the File-menu
