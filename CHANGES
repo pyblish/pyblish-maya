@@ -3,6 +3,37 @@ pyblish-maya Changelog
 
 This contains all major version changes between pyblish-maya releases.
 
+Version 1.0.14
+--------------
+
+- Updated plug-ins to 1.1
+- Updated integration to Pyblish Integration
+
+Version 1.0.13
+--------------
+
+- API: Changed data members current_file -> currentFile and
+    workspace_dir -> workspaceDir. This is a breaking change,
+    make sure to update your plug-ins to use the new names.
+
+Version 1.0.12
+--------------
+
+- Added compatibility with pyblish_endpoint=1.1.8
+
+Version 1.0.11
+--------------
+
+- Added compatibility with pyblish_endpoint=1.1.5
+- Added environment variable PYBLISH_QML_CONSOLE to display
+    console window for Pyblish QML.
+- Refactoring
+
+Version 1.0.10
+--------------
+
+- Added support for Pyblish QML pre-loading
+
 Version 1.0.9
 -------------
 
