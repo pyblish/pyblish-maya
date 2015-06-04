@@ -18,7 +18,7 @@ class SelectWorkspace(pyblish.api.Selector):
     hosts = ['maya']
     version = (0, 1, 0)
 
-    def process_context(self, context):
+    def process(self, context):
         workspace = cmds.workspace(rootDirectory=True, query=True)
         if not workspace:
             # Project has not been set. Files will
