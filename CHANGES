@@ -3,6 +3,12 @@ pyblish-maya Changelog
 
 This contains all major version changes between pyblish-maya releases.
 
+Version 1.0.14
+--------------
+
+- Updated plug-ins to 1.1
+- Updated integration to Pyblish Integration
+
 Version 1.0.13
 --------------
 
