@@ -1,7 +1,6 @@
 ### ![][logo]
 
 [![Build Status][travis-image]][travis-link]
-[![PyPI version][pypi-image]][pypi-link]
 
 Autodesk Maya integration of Pyblish
 
@@ -15,5 +14,3 @@ Autodesk Maya integration of Pyblish
 
 [travis-image]: https://travis-ci.org/pyblish/pyblish-maya.svg?branch=master
 [travis-link]: https://travis-ci.org/pyblish/pyblish-maya
-[pypi-image]: https://badge.fury.io/py/pyblish-maya.svg
-[pypi-link]: http://badge.fury.io/py/pyblish-maya
