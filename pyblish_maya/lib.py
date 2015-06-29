@@ -99,10 +99,12 @@ def _add_to_filemenu():
     cmds.menuItem('pyblishScene',
                   insertAfter='pyblishOpeningDivider',
                   label='Publish',
+                  parent='mainFileMenu',
                   command=lambda _: pyblish_maya.show())
 
     cmds.menuItem('pyblishCloseDivider',
                   insertAfter='pyblishScene',
+                  parent='mainFileMenu',
                   divider=True)
 
 
