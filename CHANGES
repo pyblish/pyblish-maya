@@ -3,6 +3,11 @@ pyblish-maya Changelog
 
 This contains all major version changes between pyblish-maya releases.
 
+Version 1.0.15
+--------------
+
+- Fix for menu item appearing in the wrong spot (#43)
+
 Version 1.0.14
 --------------
 
