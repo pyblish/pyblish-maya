@@ -3,6 +3,11 @@ pyblish-maya Changelog
 
 This contains all major version changes between pyblish-maya releases.
 
+Version 1.1.1
+-------------
+
+- Exposed `register_host`
+
 Version 1.1.0
 -------------
 

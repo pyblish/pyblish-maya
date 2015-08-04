@@ -38,12 +38,16 @@ def setup(console=False):
 
     register_plugins()
     add_to_filemenu()
+    register_host()
 
+    pyblish_integration.echo("pyblish: Integration loaded..")
+
+
+def register_host():
+    """Register supported hosts"""
     pyblish.api.register_host("mayabatch")
     pyblish.api.register_host("mayapy")
     pyblish.api.register_host("maya")
-
-    pyblish_integration.echo("pyblish: Integration loaded..")
 
 
 def register_plugins():
