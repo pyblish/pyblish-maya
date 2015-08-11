@@ -19,14 +19,16 @@ import plugins
 show = pyblish_integration.show
 
 
-def setup(console=False):
+def setup(console=False, port=None):
     """Setup integration
 
     Registers Pyblish for Maya plug-ins and appends an item to the File-menu
 
     Attributes:
-        preload (bool): Preload the current GUI
         console (bool): Display console with GUI
+        port (int, optional): Port from which to start looking for an
+            available port to connect with Pyblish QML, default
+            provided by Pyblish Integration.
 
     """
 
@@ -34,7 +36,7 @@ def setup(console=False):
         return utils.executeInMainThreadWithResult(func, *args, **kwargs)
 
     pyblish_integration.register_dispatch_wrapper(threaded_wrapper)
-    pyblish_integration.setup(console)
+    pyblish_integration.setup(console=console, port=port)
 
     register_plugins()
     add_to_filemenu()
@@ -90,13 +92,11 @@ def _add_to_filemenu():
 
     """
 
-    import sys
     from maya import cmds
 
     # We'll need to re-import here, due to this being called
     # in a deferred call by Maya during idle, it won't have access
     # to other variables declared in this module.
-    import pyblish
     import pyblish_maya
 
     cmds.menuItem('pyblishOpeningDivider',
