@@ -1,1 +1,0 @@
-A Maya example of two defined instances, wherof one is being published using the supplied plugins.
