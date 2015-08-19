@@ -139,3 +139,20 @@ def maintained_selection():
         else:
             cmds.select(deselect=True,
                         noExpand=True)
+
+@contextlib.contextmanager
+def maintained_time():
+    """Maintain current time during context
+
+    Example:
+        >>> with maintained_time():
+        ...    cmds.playblast()
+        >>> # Time restored
+
+    """
+
+    ct = cmds.currentTime(query=True)
+    try:
+        yield
+    finally:
+        cmds.currentTime(ct, edit=True)
