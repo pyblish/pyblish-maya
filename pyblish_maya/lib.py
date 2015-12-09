@@ -1,9 +1,11 @@
 # Standard library
 import os
+import sys
 import inspect
 import contextlib
 
 # Pyblish libraries
+import pyblish
 import pyblish.api
 import pyblish_integration
 
@@ -15,8 +17,9 @@ from maya import utils
 # Local libraries
 import plugins
 
-
-show = pyblish_integration.show
+self = sys.modules[__name__]
+self.show = pyblish_integration.show
+self._has_been_setup = False
 
 
 def setup(console=False, port=None):
@@ -32,6 +35,9 @@ def setup(console=False, port=None):
 
     """
 
+    if self._has_been_setup:
+        teardown()
+
     def threaded_wrapper(func, *args, **kwargs):
         return utils.executeInMainThreadWithResult(func, *args, **kwargs)
 
@@ -42,7 +48,30 @@ def setup(console=False, port=None):
     add_to_filemenu()
     register_host()
 
+    self._has_been_setup = True
     pyblish_integration.echo("pyblish: Integration loaded..")
+
+
+def teardown():
+    """Remove integration"""
+    if not self._has_been_setup:
+        return
+
+    pyblish_integration.teardown()
+
+    deregister_plugins()
+    deregister_host()
+    remove_from_filemenu()
+
+    self._has_been_setup = False
+    pyblish_integration.echo("pyblish: Integration torn down successfully")
+
+
+def deregister_plugins():
+    # Register accompanying plugins
+    plugin_path = os.path.dirname(plugins.__file__)
+    pyblish.api.deregister_plugin_path(plugin_path)
+    pyblish_integration.echo("pyblish: Deregistered %s" % plugin_path)
 
 
 def register_host():
@@ -50,6 +79,13 @@ def register_host():
     pyblish.api.register_host("mayabatch")
     pyblish.api.register_host("mayapy")
     pyblish.api.register_host("maya")
+
+
+def deregister_host():
+    """Register supported hosts"""
+    pyblish.api.deregister_host("mayabatch")
+    pyblish.api.deregister_host("mayapy")
+    pyblish.api.deregister_host("maya")
 
 
 def register_plugins():
@@ -68,20 +104,28 @@ def add_to_filemenu():
 
     """
 
-    # As Maya builds its menus dynamically upon being accessed,
-    # we force its build here prior to adding our entry using it's
-    # native mel function call.
-    mel.eval("evalDeferred buildFileMenu")
-
-    # Serialise function into string
-    script = inspect.getsource(_add_to_filemenu)
-    script += "\n_add_to_filemenu()"
-
     if hasattr(cmds, 'about') and not cmds.about(batch=True):
+        # As Maya builds its menus dynamically upon being accessed,
+        # we force its build here prior to adding our entry using it's
+        # native mel function call.
+        mel.eval("evalDeferred buildFileMenu")
+
+        # Serialise function into string
+        script = inspect.getsource(_add_to_filemenu)
+        script += "\n_add_to_filemenu()"
+
         # If cmds doesn't have any members, we're most likely in an
         # uninitialized batch-mode. It it does exists, ensure we
         # really aren't in batch mode.
         cmds.evalDeferred(script)
+
+
+def remove_from_filemenu():
+    for item in ("pyblishOpeningDivider",
+                 "pyblishScene",
+                 "pyblishCloseDivider"):
+        if cmds.menuItem(item, exists=True):
+            cmds.deleteUI(item, menuItem=True)
 
 
 def _add_to_filemenu():
@@ -92,12 +136,20 @@ def _add_to_filemenu():
 
     """
 
+    import os
+    import pyblish
     from maya import cmds
 
-    # We'll need to re-import here, due to this being called
-    # in a deferred call by Maya during idle, it won't have access
-    # to other variables declared in this module.
-    import pyblish_maya
+    # This must be duplicated here, due to this function
+    # not being available through the above `evalDeferred`
+    for item in ("pyblishOpeningDivider",
+                 "pyblishScene",
+                 "pyblishCloseDivider"):
+        if cmds.menuItem(item, exists=True):
+            cmds.deleteUI(item, menuItem=True)
+
+    icon = os.path.dirname(pyblish.__file__)
+    icon = os.path.join(icon, "icons", "logo-32x32.svg")
 
     cmds.menuItem('pyblishOpeningDivider',
                   divider=True,
@@ -108,7 +160,8 @@ def _add_to_filemenu():
                   insertAfter='pyblishOpeningDivider',
                   label='Publish',
                   parent='mainFileMenu',
-                  command=lambda _: pyblish_maya.show())
+                  image=icon,
+                  command="import pyblish_maya;pyblish_maya.show()")
 
     cmds.menuItem('pyblishCloseDivider',
                   insertAfter='pyblishScene',
@@ -139,3 +192,21 @@ def maintained_selection():
         else:
             cmds.select(deselect=True,
                         noExpand=True)
+
+
+@contextlib.contextmanager
+def maintained_time():
+    """Maintain current time during context
+
+    Example:
+        >>> with maintained_time():
+        ...    cmds.playblast()
+        >>> # Time restored
+
+    """
+
+    ct = cmds.currentTime(query=True)
+    try:
+        yield
+    finally:
+        cmds.currentTime(ct, edit=True)
