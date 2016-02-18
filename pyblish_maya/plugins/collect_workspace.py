@@ -10,6 +10,7 @@ class CollectWorkspace(pyblish.api.ContextPlugin):
     """Inject the current workspace into context"""
 
     order = pyblish.api.CollectorOrder - 0.5
+    label = "Maya Workspace"
 
     hosts = ['maya']
     version = (0, 1, 0)
