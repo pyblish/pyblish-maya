@@ -5,7 +5,7 @@ import pyblish.api
 from maya import cmds
 
 
-class CollectWorkspace(pyblish.api.ContextPlugin):
+class CollectMayaWorkspace(pyblish.api.ContextPlugin):
     """Inject the current workspace into context"""
 
     order = pyblish.api.CollectorOrder - 0.5
