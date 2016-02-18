@@ -5,8 +5,7 @@ import pyblish.api
 from maya import cmds
 
 
-@pyblish.api.log
-class CollectCurrentFile(pyblish.api.ContextPlugin):
+class CollectMayaCurrentFile(pyblish.api.ContextPlugin):
     """Inject the current working file into context"""
 
     order = pyblish.api.CollectorOrder - 0.5
