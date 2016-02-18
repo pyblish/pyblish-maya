@@ -6,14 +6,11 @@ from maya import cmds
 
 
 @pyblish.api.log
-class SelectWorkspace(pyblish.api.Selector):
-    """Inject the current working file into context
+class CollectWorkspace(pyblish.api.ContextPlugin):
+    """Inject the current workspace into context"""
 
-    .. note:: This is optional and used in the supplied extractors.
-        If present, the destination of files extracted will end up
-        relative this workspace.
-
-    """
+    order = pyblish.api.CollectorOrder - 0.5
+    label = "Maya Workspace"
 
     hosts = ['maya']
     version = (0, 1, 0)

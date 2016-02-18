@@ -6,19 +6,17 @@ from maya import cmds
 
 
 @pyblish.api.log
-class SelectCurrentFile(pyblish.api.Selector):
-    """Inject the current working file into context
+class CollectCurrentFile(pyblish.api.ContextPlugin):
+    """Inject the current working file into context"""
 
-    .. note:: This is mandatory for the supplied extractors
-    or else they will fail.
-
-    """
+    order = pyblish.api.CollectorOrder - 0.5
+    label = "Maya Current File"
 
     hosts = ['maya']
     version = (0, 1, 0)
 
     def process(self, context):
-        """Todo, inject the current working file"""
+        """Inject the current working file"""
         current_file = cmds.file(sceneName=True, query=True)
 
         # Maya returns forward-slashes by default
