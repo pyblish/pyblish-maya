@@ -8,8 +8,8 @@ from maya import cmds
 @pyblish.api.log
 class CollectCurrentFile(pyblish.api.ContextPlugin):
     """Inject the current working file into context"""
-    
-    order = pyblish.api.CollectorOrder
+
+    order = pyblish.api.CollectorOrder - 0.5
 
     hosts = ['maya']
     version = (0, 1, 0)
