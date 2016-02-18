@@ -5,7 +5,6 @@ import pyblish.api
 from maya import cmds
 
 
-@pyblish.api.log
 class CollectWorkspace(pyblish.api.ContextPlugin):
     """Inject the current workspace into context"""
 
