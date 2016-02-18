@@ -15,7 +15,7 @@ class CollectCurrentFile(pyblish.api.ContextPlugin):
     version = (0, 1, 0)
 
     def process(self, context):
-        """Todo, inject the current working file"""
+        """Inject the current working file"""
         current_file = cmds.file(sceneName=True, query=True)
 
         # Maya returns forward-slashes by default
