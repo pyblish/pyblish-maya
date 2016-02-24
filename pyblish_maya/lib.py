@@ -7,7 +7,6 @@ import contextlib
 # Pyblish libraries
 import pyblish
 import pyblish.api
-import pyblish_integration
 
 # Host libraries
 from maya import mel
@@ -18,9 +17,20 @@ from maya import utils
 import plugins
 
 self = sys.modules[__name__]
-self.show = pyblish_integration.show
 self._has_been_setup = False
 
+try:
+    import pyblish_integration
+    self._has_integration = True
+except:
+    self._has_integration = False
+
+
+def show():
+    if self._has_integration:
+        return pyblish_integration.show()
+    else:
+        return sys.stderr.write("GUI requires pyblish-integration.\n")
 
 def setup(console=False, port=None):
     """Setup integration
@@ -38,18 +48,19 @@ def setup(console=False, port=None):
     if self._has_been_setup:
         teardown()
 
-    def threaded_wrapper(func, *args, **kwargs):
-        return utils.executeInMainThreadWithResult(func, *args, **kwargs)
+    if self._has_integration:
+        def threaded_wrapper(func, *args, **kwargs):
+            return utils.executeInMainThreadWithResult(func, *args, **kwargs)
 
-    pyblish_integration.register_dispatch_wrapper(threaded_wrapper)
-    pyblish_integration.setup(console=console, port=port)
+        pyblish_integration.register_dispatch_wrapper(threaded_wrapper)
+        pyblish_integration.setup(console=console, port=port)
 
     register_plugins()
     add_to_filemenu()
     register_host()
 
     self._has_been_setup = True
-    pyblish_integration.echo("pyblish: Integration loaded..")
+    sys.stdout.write("pyblish: Integration loaded..")
 
 
 def teardown():
@@ -57,21 +68,22 @@ def teardown():
     if not self._has_been_setup:
         return
 
-    pyblish_integration.teardown()
+    if self._has_integration:
+        pyblish_integration.teardown()
 
     deregister_plugins()
     deregister_host()
     remove_from_filemenu()
 
     self._has_been_setup = False
-    pyblish_integration.echo("pyblish: Integration torn down successfully")
+    sys.stdout.write("pyblish: Integration torn down successfully")
 
 
 def deregister_plugins():
     # Register accompanying plugins
     plugin_path = os.path.dirname(plugins.__file__)
     pyblish.api.deregister_plugin_path(plugin_path)
-    pyblish_integration.echo("pyblish: Deregistered %s" % plugin_path)
+    sys.stdout.write("pyblish: Deregistered %s" % plugin_path)
 
 
 def register_host():
@@ -79,7 +91,6 @@ def register_host():
     pyblish.api.register_host("mayabatch")
     pyblish.api.register_host("mayapy")
     pyblish.api.register_host("maya")
-
 
 def deregister_host():
     """Register supported hosts"""
@@ -92,10 +103,10 @@ def register_plugins():
     # Register accompanying plugins
     plugin_path = os.path.dirname(plugins.__file__)
     pyblish.api.register_plugin_path(plugin_path)
-    pyblish_integration.echo("pyblish: Registered %s" % plugin_path)
+    sys.stdout.write("pyblish: Registered %s" % plugin_path)
 
 
-def add_to_filemenu():
+def add_to_filemenu(gui=True):
     """Add Pyblish to file-menu
 
     .. note:: We're going a bit hacky here, probably due to my lack
@@ -112,7 +123,7 @@ def add_to_filemenu():
 
         # Serialise function into string
         script = inspect.getsource(_add_to_filemenu)
-        script += "\n_add_to_filemenu()"
+        script += "\n_add_to_filemenu(gui=%s)" % gui
 
         # If cmds doesn't have any members, we're most likely in an
         # uninitialized batch-mode. It it does exists, ensure we
@@ -128,7 +139,7 @@ def remove_from_filemenu():
             cmds.deleteUI(item, menuItem=True)
 
 
-def _add_to_filemenu():
+def _add_to_filemenu(gui=True):
     """Helper function for the above :func:add_to_filemenu()
 
     This function is serialised into a string and passed on
@@ -151,21 +162,25 @@ def _add_to_filemenu():
     icon = os.path.dirname(pyblish.__file__)
     icon = os.path.join(icon, "icons", "logo-32x32.svg")
 
-    cmds.menuItem('pyblishOpeningDivider',
+    command = ("import pyblish_maya;pyblish_maya.show()" if gui
+               else "import pyblish.util;pyblish.util.publish()")
+
+    print "Adding to menu: %s" % command
+    cmds.menuItem("pyblishOpeningDivider",
                   divider=True,
-                  insertAfter='saveAsOptions',
-                  parent='mainFileMenu')
+                  insertAfter="saveAsOptions",
+                  parent="mainFileMenu")
 
-    cmds.menuItem('pyblishScene',
-                  insertAfter='pyblishOpeningDivider',
-                  label='Publish',
-                  parent='mainFileMenu',
+    cmds.menuItem("pyblishScene",
+                  insertAfter="pyblishOpeningDivider",
+                  label="Publish",
+                  parent="mainFileMenu",
                   image=icon,
-                  command="import pyblish_maya;pyblish_maya.show()")
+                  command=command)
 
-    cmds.menuItem('pyblishCloseDivider',
-                  insertAfter='pyblishScene',
-                  parent='mainFileMenu',
+    cmds.menuItem("pyblishCloseDivider",
+                  insertAfter="pyblishScene",
+                  parent="mainFileMenu",
                   divider=True)
 
 
