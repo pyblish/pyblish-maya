@@ -39,20 +39,26 @@ You may also want to consider a graphical user interface, such as [pyblish-qml](
 To get started using pyblish-maya, run `setup()` at startup of your application.
 
 ```python
+# 1. Register your favourite GUI
 import pyblish.api
 pyblish.api.register_gui("pyblish_lite")
 
+# 2. Set-up Pyblish for Maya
 import pyblish_maya
 pyblish_maya.setup()
 ```
 
-This will:
+**Under the hood**
+
+The `setup()` command will:
 
 1. Register `maya` and `mayapy` as as a "host" to Pyblish, allowing plug-ins to be filtered accordingly.
 2. Append a new menu item, "Publish" to your File-menu
 3. Register a minimal set of plug-ins that are common across all integrations.
 
 ![image](https://cloud.githubusercontent.com/assets/2152766/16318991/49012c02-3989-11e6-9602-7ec3d7823b77.png)
+
+**Manually show GUI**
 
 The menu-button is set to run `show()`, which you may also manually call yourself, such as from a shelf-button.
 
@@ -61,12 +67,16 @@ import pyblish_maya
 pyblish_maya.show()
 ```
 
+**No menu-item**
+
 Should you not want a menu-item, pass `menu=False`.
 
 ```python
 import pyblish_maya
-pyblish_maya.show()
+pyblish_maya.show(menu=False)
 ```
+
+**Teardown pyblish-maya**
 
 To get rid of the menu, and completely remove any trace of pyblish-maya from your Maya session, run `teardown()`.
 
