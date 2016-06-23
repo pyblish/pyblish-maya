@@ -12,8 +12,7 @@ import pyblish.api
 from maya import mel, cmds
 
 # Local libraries
-import plugins
-from .vendor.Qt import QtWidgets
+from . import plugins
 
 self = sys.modules[__name__]
 self._has_been_setup = False
@@ -45,6 +44,14 @@ def setup():
 
 
 def show():
+    """Try showing the most desirable GUI
+
+    This function cycles through the currently registered
+    graphical user interfaces, if any, and presents it to
+    the user.
+
+    """
+
     # Prefer last registered
     guis = reversed(pyblish.api.registered_guis())
     gui = None
@@ -59,56 +66,6 @@ def show():
 
     if not gui:
         _show_no_gui()
-
-
-def _show_no_gui():
-    messagebox = QtWidgets.QMessageBox()
-    messagebox.setIcon(messagebox.Warning)
-
-    spacer = QtWidgets.QWidget()
-    spacer.setMinimumSize(400, 0)
-    spacer.setSizePolicy(QtWidgets.QSizePolicy.Minimum,
-                         QtWidgets.QSizePolicy.Expanding)
-
-    layout = messagebox.layout()
-    layout.addWidget(spacer, layout.rowCount(), 0, 1, layout.columnCount())
-
-    messagebox.setWindowTitle("Uh oh")
-    messagebox.setText("No registered GUI found.")
-
-    if not pyblish.api.registered_guis():
-        messagebox.setInformativeText(
-            "In order to use this button, register a GUI and try again. "
-            "See details for more information.")
-
-        messagebox.setDetailedText(
-            "In order to use this functionality, you must choose, "
-            "install and register which GUI you would like to use."
-            "\n"
-            "You can register one like this."
-            "\n"
-            "\n"
-            ">>> import pyblish.api\n"
-            ">>> pyblish.api.register_gui(\"pyblish_lite\")"
-            "\n"
-            "\n"
-            "See http://api.pyblish.com/register_gui for more information.")
-
-    else:
-        messagebox.setInformativeText(
-            "None of the registered graphical user interfaces "
-            "could be found."
-            "\n"
-            "\n"
-            "Press \"Show details\" for more information.")
-
-        messagebox.setDetailedText(
-            "These interfaces are currently registered."
-            "\n"
-            "%s" % "\n".join(pyblish.api.registered_guis()))
-
-    messagebox.setStandardButtons(messagebox.Ok)
-    messagebox.exec_()
 
 
 def teardown():
@@ -267,3 +224,83 @@ def maintained_time():
         yield
     finally:
         cmds.currentTime(ct, edit=True)
+
+
+def _show_no_gui():
+    """Popup with information about how to register a new GUI
+
+    In the event of no GUI being registered or available,
+    this information dialog will appear to guide the user
+    through how to get set up with one.
+
+    """
+
+    try:
+        from .vendor.Qt import QtWidgets, QtGui
+    except ImportError:
+        raise ImportError("Pyblish requires either PySide or PyQt bindings.")
+
+    messagebox = QtWidgets.QMessageBox()
+    messagebox.setIcon(messagebox.Warning)
+    messagebox.setWindowIcon(QtGui.QIcon(os.path.join(
+        os.path.dirname(pyblish.__file__),
+        "icons",
+        "logo-32x32.svg"))
+    )
+
+    spacer = QtWidgets.QWidget()
+    spacer.setMinimumSize(400, 0)
+    spacer.setSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                         QtWidgets.QSizePolicy.Expanding)
+
+    layout = messagebox.layout()
+    layout.addWidget(spacer, layout.rowCount(), 0, 1, layout.columnCount())
+
+    messagebox.setWindowTitle("Uh oh")
+    messagebox.setText("No registered GUI found.")
+
+    if not pyblish.api.registered_guis():
+        messagebox.setInformativeText(
+            "In order to show you a GUI, one must first be registered. "
+            "Press \"Show details...\" below for information on how to "
+            "do that.")
+
+        messagebox.setDetailedText(
+            "Pyblish supports one or more graphical user interfaces "
+            "to be registered at once, the next acting as a fallback to "
+            "the previous."
+            "\n"
+            "\n"
+            "For example, to use Pyblish Lite, first install it:"
+            "\n"
+            "\n"
+            "$ pip install pyblish-lite"
+            "\n"
+            "\n"
+            "Then register it, like so:"
+            "\n"
+            "\n"
+            ">>> import pyblish.api\n"
+            ">>> pyblish.api.register_gui(\"pyblish_lite\")"
+            "\n"
+            "\n"
+            "The next time you try running this, Lite will appear."
+            "\n"
+            "See http://api.pyblish.com/register_gui.html for "
+            "more information.")
+
+    else:
+        messagebox.setInformativeText(
+            "None of the registered graphical user interfaces "
+            "could be found."
+            "\n"
+            "\n"
+            "Press \"Show details\" for more information.")
+
+        messagebox.setDetailedText(
+            "These interfaces are currently registered."
+            "\n"
+            "%s" % "\n".join(pyblish.api.registered_guis()))
+
+    messagebox.setStandardButtons(messagebox.Ok)
+    messagebox.exec_()
