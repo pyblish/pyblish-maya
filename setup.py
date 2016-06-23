@@ -43,4 +43,7 @@ setup(
         "pyblish_maya": ["plugins/*.py",
                          "pythonpath/*.py"]
     },
+    install_requires=[
+        "pyblish-base>=1.4"
+    ],
 )
