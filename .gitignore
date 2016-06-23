@@ -4,3 +4,5 @@
 *.mb
 *.pyc
 coverage
+dist
+*.egg-info
