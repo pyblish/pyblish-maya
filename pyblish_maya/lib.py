@@ -64,32 +64,48 @@ def show():
 def _show_no_gui():
     messagebox = QtWidgets.QMessageBox()
     messagebox.setIcon(messagebox.Warning)
-    messagebox.setFixedWidth(300)
-    messagebox.setWindowTitle("Attention")
-    messagebox.setText("No GUI found")
+
+    spacer = QtWidgets.QWidget()
+    spacer.setMinimumSize(400, 0)
+    spacer.setSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                         QtWidgets.QSizePolicy.Expanding)
+
+    layout = messagebox.layout()
+    layout.addWidget(spacer, layout.rowCount(), 0, 1, layout.columnCount())
+
+    messagebox.setWindowTitle("Uh oh")
+    messagebox.setText("No registered GUI found.")
 
     if not pyblish.api.registered_guis():
         messagebox.setInformativeText(
-            "Could not detect a registered graphical "
-            "user interface for Pyblish.\n\n"
-
-            "To register one, run `pyblish.api.register_gui` "
-            "with the name of the GUI you would like this button "
-            "to show.")
+            "In order to use this button, register a GUI and try again. "
+            "See details for more information.")
 
         messagebox.setDetailedText(
+            "In order to use this functionality, you must choose, "
+            "install and register which GUI you would like to use."
+            "\n"
+            "You can register one like this."
+            "\n"
+            "\n"
+            ">>> import pyblish.api\n"
+            ">>> pyblish.api.register_gui(\"pyblish_lite\")"
+            "\n"
+            "\n"
             "See http://api.pyblish.com/register_gui for more information.")
 
     else:
         messagebox.setInformativeText(
-            "None of the registered graphical user interfaces could "
-            "be found\n\n"
-
-            "See details for more information.")
+            "None of the registered graphical user interfaces "
+            "could be found."
+            "\n"
+            "\n"
+            "Press \"Show details\" for more information.")
 
         messagebox.setDetailedText(
-            "Currently registered graphical user interfaces.\n\n%s" %
-            "- ".join(pyblish.api.registered_guis()))
+            "These interfaces are currently registered."
+            "\n"
+            "%s" % "\n".join(pyblish.api.registered_guis()))
 
     messagebox.setStandardButtons(messagebox.Ok)
     messagebox.exec_()
