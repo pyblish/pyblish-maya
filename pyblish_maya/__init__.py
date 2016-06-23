@@ -21,4 +21,5 @@ __all__ = [
     "add_to_filemenu",
 
     "maintained_selection",
+    "maintained_time",
 ]
