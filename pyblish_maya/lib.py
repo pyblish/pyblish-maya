@@ -16,10 +16,11 @@ from . import plugins
 
 self = sys.modules[__name__]
 self._has_been_setup = False
+self._has_menu = False
 self._registered_gui = None
 
 
-def setup():
+def setup(menu=True):
     """Setup integration
 
     Registers Pyblish for Maya plug-ins and appends an item to the File-menu
@@ -37,7 +38,10 @@ def setup():
 
     register_plugins()
     register_host()
-    add_to_filemenu()
+
+    if menu:
+        add_to_filemenu()
+        self._has_menu = True
 
     self._has_been_setup = True
     print("Pyblish loaded successfully.")
@@ -75,7 +79,10 @@ def teardown():
 
     deregister_plugins()
     deregister_host()
-    remove_from_filemenu()
+
+    if self._has_menu:
+        remove_from_filemenu()
+        self._has_menu = False
 
     self._has_been_setup = False
     print("pyblish: Integration torn down successfully")
