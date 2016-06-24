@@ -56,20 +56,22 @@ def show():
 
     """
 
+    return (_discover_gui() or _show_no_gui)()
+
+
+def _discover_gui():
+    """Return the most desirable of the currently registered GUIs"""
+
     # Prefer last registered
     guis = reversed(pyblish.api.registered_guis())
-    gui = None
 
     for gui in guis:
         try:
-            gui = __import__(gui)
+            gui = __import__(gui).show
         except (ImportError, AttributeError):
             continue
         else:
-            return gui.show()
-
-    if not gui:
-        _show_no_gui()
+            return gui
 
 
 def teardown():
