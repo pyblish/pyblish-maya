@@ -1,6 +1,7 @@
 language: python
+
 python:
 - 2.7
+
 script:
-- git clone https://github.com/pyblish/pyblish-maya.git
-sudo: false
+- pip install file://$(pwd)

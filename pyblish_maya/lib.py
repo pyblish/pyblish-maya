@@ -9,30 +9,18 @@ import pyblish
 import pyblish.api
 
 # Host libraries
-from maya import mel
-from maya import cmds
-from maya import utils
+from maya import mel, cmds
 
 # Local libraries
-import plugins
+from . import plugins
 
 self = sys.modules[__name__]
 self._has_been_setup = False
-
-try:
-    import pyblish_integration
-    self._has_integration = True
-except:
-    self._has_integration = False
+self._has_menu = False
+self._registered_gui = None
 
 
-def show():
-    if self._has_integration:
-        return pyblish_integration.show()
-    else:
-        return sys.stderr.write("GUI requires pyblish-integration.\n")
-
-def setup(console=False, port=None):
+def setup(menu=True):
     """Setup integration
 
     Registers Pyblish for Maya plug-ins and appends an item to the File-menu
@@ -48,19 +36,42 @@ def setup(console=False, port=None):
     if self._has_been_setup:
         teardown()
 
-    if self._has_integration:
-        def threaded_wrapper(func, *args, **kwargs):
-            return utils.executeInMainThreadWithResult(func, *args, **kwargs)
-
-        pyblish_integration.register_dispatch_wrapper(threaded_wrapper)
-        pyblish_integration.setup(console=console, port=port)
-
     register_plugins()
-    add_to_filemenu()
     register_host()
 
+    if menu:
+        add_to_filemenu()
+        self._has_menu = True
+
     self._has_been_setup = True
-    sys.stdout.write("pyblish: Integration loaded..")
+    print("Pyblish loaded successfully.")
+
+
+def show():
+    """Try showing the most desirable GUI
+
+    This function cycles through the currently registered
+    graphical user interfaces, if any, and presents it to
+    the user.
+
+    """
+
+    return (_discover_gui() or _show_no_gui)()
+
+
+def _discover_gui():
+    """Return the most desirable of the currently registered GUIs"""
+
+    # Prefer last registered
+    guis = reversed(pyblish.api.registered_guis())
+
+    for gui in guis:
+        try:
+            gui = __import__(gui).show
+        except (ImportError, AttributeError):
+            continue
+        else:
+            return gui
 
 
 def teardown():
@@ -68,22 +79,22 @@ def teardown():
     if not self._has_been_setup:
         return
 
-    if self._has_integration:
-        pyblish_integration.teardown()
-
     deregister_plugins()
     deregister_host()
-    remove_from_filemenu()
+
+    if self._has_menu:
+        remove_from_filemenu()
+        self._has_menu = False
 
     self._has_been_setup = False
-    sys.stdout.write("pyblish: Integration torn down successfully")
+    print("pyblish: Integration torn down successfully")
 
 
 def deregister_plugins():
     # Register accompanying plugins
     plugin_path = os.path.dirname(plugins.__file__)
     pyblish.api.deregister_plugin_path(plugin_path)
-    sys.stdout.write("pyblish: Deregistered %s" % plugin_path)
+    print("pyblish: Deregistered %s" % plugin_path)
 
 
 def register_host():
@@ -91,6 +102,7 @@ def register_host():
     pyblish.api.register_host("mayabatch")
     pyblish.api.register_host("mayapy")
     pyblish.api.register_host("maya")
+
 
 def deregister_host():
     """Register supported hosts"""
@@ -103,10 +115,10 @@ def register_plugins():
     # Register accompanying plugins
     plugin_path = os.path.dirname(plugins.__file__)
     pyblish.api.register_plugin_path(plugin_path)
-    sys.stdout.write("pyblish: Registered %s" % plugin_path)
+    print("pyblish: Registered %s" % plugin_path)
 
 
-def add_to_filemenu(gui=True):
+def add_to_filemenu():
     """Add Pyblish to file-menu
 
     .. note:: We're going a bit hacky here, probably due to my lack
@@ -123,7 +135,7 @@ def add_to_filemenu(gui=True):
 
         # Serialise function into string
         script = inspect.getsource(_add_to_filemenu)
-        script += "\n_add_to_filemenu(gui=%s)" % gui
+        script += "\n_add_to_filemenu()"
 
         # If cmds doesn't have any members, we're most likely in an
         # uninitialized batch-mode. It it does exists, ensure we
@@ -139,7 +151,7 @@ def remove_from_filemenu():
             cmds.deleteUI(item, menuItem=True)
 
 
-def _add_to_filemenu(gui=True):
+def _add_to_filemenu():
     """Helper function for the above :func:add_to_filemenu()
 
     This function is serialised into a string and passed on
@@ -162,10 +174,6 @@ def _add_to_filemenu(gui=True):
     icon = os.path.dirname(pyblish.__file__)
     icon = os.path.join(icon, "icons", "logo-32x32.svg")
 
-    command = ("import pyblish_maya;pyblish_maya.show()" if gui
-               else "import pyblish.util;pyblish.util.publish()")
-
-    print "Adding to menu: %s" % command
     cmds.menuItem("pyblishOpeningDivider",
                   divider=True,
                   insertAfter="saveAsOptions",
@@ -176,7 +184,7 @@ def _add_to_filemenu(gui=True):
                   label="Publish",
                   parent="mainFileMenu",
                   image=icon,
-                  command=command)
+                  command="import pyblish_maya;pyblish_maya.show()")
 
     cmds.menuItem("pyblishCloseDivider",
                   insertAfter="pyblishScene",
@@ -225,3 +233,83 @@ def maintained_time():
         yield
     finally:
         cmds.currentTime(ct, edit=True)
+
+
+def _show_no_gui():
+    """Popup with information about how to register a new GUI
+
+    In the event of no GUI being registered or available,
+    this information dialog will appear to guide the user
+    through how to get set up with one.
+
+    """
+
+    try:
+        from .vendor.Qt import QtWidgets, QtGui
+    except ImportError:
+        raise ImportError("Pyblish requires either PySide or PyQt bindings.")
+
+    messagebox = QtWidgets.QMessageBox()
+    messagebox.setIcon(messagebox.Warning)
+    messagebox.setWindowIcon(QtGui.QIcon(os.path.join(
+        os.path.dirname(pyblish.__file__),
+        "icons",
+        "logo-32x32.svg"))
+    )
+
+    spacer = QtWidgets.QWidget()
+    spacer.setMinimumSize(400, 0)
+    spacer.setSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                         QtWidgets.QSizePolicy.Expanding)
+
+    layout = messagebox.layout()
+    layout.addWidget(spacer, layout.rowCount(), 0, 1, layout.columnCount())
+
+    messagebox.setWindowTitle("Uh oh")
+    messagebox.setText("No registered GUI found.")
+
+    if not pyblish.api.registered_guis():
+        messagebox.setInformativeText(
+            "In order to show you a GUI, one must first be registered. "
+            "Press \"Show details...\" below for information on how to "
+            "do that.")
+
+        messagebox.setDetailedText(
+            "Pyblish supports one or more graphical user interfaces "
+            "to be registered at once, the next acting as a fallback to "
+            "the previous."
+            "\n"
+            "\n"
+            "For example, to use Pyblish Lite, first install it:"
+            "\n"
+            "\n"
+            "$ pip install pyblish-lite"
+            "\n"
+            "\n"
+            "Then register it, like so:"
+            "\n"
+            "\n"
+            ">>> import pyblish.api\n"
+            ">>> pyblish.api.register_gui(\"pyblish_lite\")"
+            "\n"
+            "\n"
+            "The next time you try running this, Lite will appear."
+            "\n"
+            "See http://api.pyblish.com/register_gui.html for "
+            "more information.")
+
+    else:
+        messagebox.setInformativeText(
+            "None of the registered graphical user interfaces "
+            "could be found."
+            "\n"
+            "\n"
+            "Press \"Show details\" for more information.")
+
+        messagebox.setDetailedText(
+            "These interfaces are currently registered."
+            "\n"
+            "%s" % "\n".join(pyblish.api.registered_guis()))
+
+    messagebox.setStandardButtons(messagebox.Ok)
+    messagebox.exec_()
