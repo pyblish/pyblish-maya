@@ -121,7 +121,7 @@ This will do the opposite of `setup()` and clean things up for you.
 
 ##### No GUI
 
-In the event that no GUI is registered upon running `setup()`, the menu-item will automatically be excluded from the set-up and provide the *user* with this information on how they can get up and running on their own.
+In the event that no GUI is registered upon running `setup()`, the button will provide the *user* with this information on how they can get up and running on their own.
 
 ![image](https://cloud.githubusercontent.com/assets/2152766/16318872/d63b7f60-3988-11e6-9431-f64991aabef3.png)
 
