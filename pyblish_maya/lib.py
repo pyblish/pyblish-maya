@@ -40,7 +40,6 @@ def setup(menu=True):
 
     register_plugins()
     register_host()
-    register_guis()
 
     if menu:
         add_to_filemenu()
@@ -84,7 +83,6 @@ def teardown():
 
     deregister_plugins()
     deregister_host()
-    deregister_guis()
 
     if self._has_menu:
         remove_from_filemenu()
@@ -120,18 +118,6 @@ def register_plugins():
     plugin_path = os.path.dirname(plugins.__file__)
     pyblish.api.register_plugin_path(plugin_path)
     print("pyblish: Registered %s" % plugin_path)
-
-
-def register_guis():
-    """Register official Pyblish guis"""
-    pyblish.api.register_gui("pyblish_qml")
-    pyblish.api.register_gui("pyblish_lite")
-
-
-def deregister_guis():
-    """Deregister official Pyblish guis"""
-    pyblish.api.deregister_gui("pyblish_qml")
-    pyblish.api.deregister_gui("pyblish_lite")
 
 
 def add_to_filemenu():
