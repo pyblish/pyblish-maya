@@ -1,7 +1,6 @@
 
 try:
     __import__("pyblish_maya")
-    __import__("pyblish")
 
 except ImportError as e:
     import traceback
@@ -9,12 +8,7 @@ except ImportError as e:
            % traceback.format_exc())
 else:
 
-    import pyblish.api
     import pyblish_maya
 
     # Setup integration
     pyblish_maya.setup()
-
-    # register default guis
-    pyblish.api.register_gui("pyblish_qml")
-    pyblish.api.register_gui("pyblish_lite")
