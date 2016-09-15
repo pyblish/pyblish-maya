@@ -1,6 +1,6 @@
 from version import *
 
-from lib import (
+from .lib import (
     show,
     setup,
     teardown,
@@ -11,6 +11,10 @@ from lib import (
     # Utility functions
     maintained_selection
 )
+
+def is_setup():
+    from . import lib    
+    return lib._has_been_setup
 
 __all__ = [
     "show",
