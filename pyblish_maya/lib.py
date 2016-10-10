@@ -13,11 +13,13 @@ from maya import mel, cmds
 
 # Local libraries
 from . import plugins
+from .vendor.Qt import QtWidgets, QtGui
 
 self = sys.modules[__name__]
 self._has_been_setup = False
 self._has_menu = False
 self._registered_gui = None
+self._dock_count = 0
 
 
 def setup(menu=True):
@@ -244,11 +246,6 @@ def _show_no_gui():
 
     """
 
-    try:
-        from .vendor.Qt import QtWidgets, QtGui
-    except ImportError:
-        raise ImportError("Pyblish requires either PySide or PyQt bindings.")
-
     messagebox = QtWidgets.QMessageBox()
     messagebox.setIcon(messagebox.Warning)
     messagebox.setWindowIcon(QtGui.QIcon(os.path.join(
@@ -313,3 +310,30 @@ def _show_no_gui():
 
     messagebox.setStandardButtons(messagebox.Ok)
     messagebox.exec_()
+
+
+class Dock(QtWidgets.QWidget):
+
+    def __init__(self, dock_count, parent=None):
+        super(Dock, self).__init__(parent)
+        QtWidgets.QVBoxLayout(self)
+        object_name = "pyblish_maya.dock" + str(dock_count)
+        self.setObjectName(object_name)
+
+
+def dock(window):
+
+    main_window = None
+    for obj in QtWidgets.qApp.topLevelWidgets():
+        if obj.objectName() == "MayaWindow":
+            main_window = obj
+
+    self._dock_count += 1
+    dock = Dock(self._dock_count, parent=main_window)
+
+    allowedAreas = ["right", "left"]
+    cmds.dockControl(label="Pyblish", area="right",
+                     content=dock.objectName(), allowedArea=allowedAreas,
+                     visible=True)
+
+    dock.layout().addWidget(window)
