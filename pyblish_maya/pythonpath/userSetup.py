@@ -6,7 +6,9 @@ except ImportError as e:
     import traceback
     print ("pyblish-maya: Could not load integration: %s"
            % traceback.format_exc())
-
 else:
+
     import pyblish_maya
+
+    # Setup integration
     pyblish_maya.setup()
