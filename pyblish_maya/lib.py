@@ -331,9 +331,7 @@ def dock(window):
     self._dock_count += 1
     dock = Dock(self._dock_count, parent=main_window)
 
-    allowedAreas = ["right", "left"]
-    cmds.dockControl(label="Pyblish", area="right",
-                     content=dock.objectName(), allowedArea=allowedAreas,
-                     visible=True)
+    cmds.dockControl(label=window.windowTitle(), area="right", visible=True,
+                     content=dock.objectName(), allowedArea=["right", "left"])
 
     dock.layout().addWidget(window)
