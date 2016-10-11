@@ -7,13 +7,14 @@ from .lib import (
     register_plugins,
     register_host,
     add_to_filemenu,
+    dock,
 
     # Utility functions
     maintained_selection
 )
 
 def is_setup():
-    from . import lib    
+    from . import lib
     return lib._has_been_setup
 
 __all__ = [
