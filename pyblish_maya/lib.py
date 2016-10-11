@@ -328,6 +328,9 @@ def dock(window):
         if obj.objectName() == "MayaWindow":
             main_window = obj
 
+    if not main_window:
+        raise ValueError("Could not find the main Maya window.")
+
     self._dock_count += 1
     dock = Dock(self._dock_count, parent=main_window)
 
