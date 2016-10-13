@@ -338,7 +338,7 @@ def dock(window):
         self._dock.deleteLater()
 
     if self._dock_control:
-        if cmds.dockControl(self._dock_control, q=True, ex=True):
+        if cmds.dockControl(self._dock_control, query=True, exists=True):
             cmds.deleteUI(self._dock_control)
 
     # Creating new dock
