@@ -19,7 +19,8 @@ self = sys.modules[__name__]
 self._has_been_setup = False
 self._has_menu = False
 self._registered_gui = None
-self._dock_count = 0
+self._dock = None
+self._dock_control = None
 
 
 def setup(menu=True):
@@ -314,11 +315,10 @@ def _show_no_gui():
 
 class Dock(QtWidgets.QWidget):
 
-    def __init__(self, dock_count, parent=None):
+    def __init__(self, parent=None):
         super(Dock, self).__init__(parent)
         QtWidgets.QVBoxLayout(self)
-        object_name = "pyblish_maya.dock" + str(dock_count)
-        self.setObjectName(object_name)
+        self.setObjectName("pyblish_maya.dock")
 
 
 def dock(window):
@@ -331,10 +331,24 @@ def dock(window):
     if not main_window:
         raise ValueError("Could not find the main Maya window.")
 
-    self._dock_count += 1
-    dock = Dock(self._dock_count, parent=main_window)
+    # Deleting existing dock
+    print "Deleting existing dock..."
+    if self._dock:
+        self._dock.setParent(None)
+        self._dock.deleteLater()
 
-    cmds.dockControl(label=window.windowTitle(), area="right", visible=True,
-                     content=dock.objectName(), allowedArea=["right", "left"])
+    if self._dock_control:
+        if cmds.dockControl(self._dock_control, query=True, exists=True):
+            cmds.deleteUI(self._dock_control)
 
+    # Creating new dock
+    print "Creating new dock..."
+    dock = Dock(parent=main_window)
+
+    dock_control = cmds.dockControl(label=window.windowTitle(), area="right",
+                                    visible=True, content=dock.objectName(),
+                                    allowedArea=["right", "left"])
     dock.layout().addWidget(window)
+
+    self._dock = dock
+    self._dock_control = dock_control
