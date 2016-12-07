@@ -78,6 +78,19 @@ The `setup()` command will:
 <br>
 <br>
 
+##### No menu-item
+
+Should you not want a menu-item, pass `menu=False`.
+
+```python
+import pyblish_maya
+pyblish_maya.setup(menu=False)
+```
+
+<br>
+<br>
+<br>
+
 ##### Manually show GUI
 
 The menu-button is set to run `show()`, which you may also manually call yourself, such as from a shelf-button.
@@ -85,19 +98,6 @@ The menu-button is set to run `show()`, which you may also manually call yoursel
 ```python
 import pyblish_maya
 pyblish_maya.show()
-```
-
-<br>
-<br>
-<br>
-
-##### No menu-item
-
-Should you not want a menu-item, pass `menu=False`.
-
-```python
-import pyblish_maya
-pyblish_maya.show(menu=False)
 ```
 
 <br>
