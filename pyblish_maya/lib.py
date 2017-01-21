@@ -59,7 +59,12 @@ def show():
 
     """
 
-    return (_discover_gui() or _show_no_gui)()
+    parent = next(
+        o for o in QtWidgets.QApplication.instance().topLevelWidgets()
+        if o.objectName() == "MayaWindow"
+    )
+
+    return (_discover_gui() or _show_no_gui)(parent)
 
 
 def _discover_gui():
