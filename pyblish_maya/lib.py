@@ -9,7 +9,8 @@ import pyblish
 import pyblish.api
 
 # Host libraries
-from maya import mel, cmds
+from maya import mel, cmds, OpenMayaUI
+from shiboken import wrapInstance
 
 # Local libraries
 from . import plugins
@@ -21,6 +22,22 @@ self._has_menu = False
 self._registered_gui = None
 self._dock = None
 self._dock_control = None
+
+
+class MainWindowHolder(object):
+    main_window_pointer = None
+    main_window_widget = None
+
+
+def get_main_window():
+    if not MainWindowHolder.main_window_pointer or not MainWindowHolder.main_window_widget:
+        print "Creating new main window pointer"
+        # noinspection PyArgumentList
+        MainWindowHolder.main_window_pointer = long(OpenMayaUI.MQtUtil.mainWindow())
+        MainWindowHolder.main_window_widget = wrapInstance(MainWindowHolder.main_window_pointer, QtGui.QMainWindow)
+        MainWindowHolder.main_window_widget.setObjectName("MayaWindow")
+
+    return MainWindowHolder.main_window_widget
 
 
 def setup(menu=True):
@@ -59,7 +76,7 @@ def show():
 
     """
 
-    return (_discover_gui() or _show_no_gui)()
+    return (_discover_gui() or _show_no_gui)(parent=get_main_window())
 
 
 def _discover_gui():
@@ -314,7 +331,6 @@ def _show_no_gui():
 
 
 class Dock(QtWidgets.QWidget):
-
     def __init__(self, parent=None):
         super(Dock, self).__init__(parent)
         QtWidgets.QVBoxLayout(self)
@@ -322,7 +338,6 @@ class Dock(QtWidgets.QWidget):
 
 
 def dock(window):
-
     main_window = None
     for obj in QtWidgets.qApp.topLevelWidgets():
         if obj.objectName() == "MayaWindow":
