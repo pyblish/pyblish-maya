@@ -1,8 +1,4 @@
-import os
-
 import pyblish.api
-
-from maya import cmds
 
 
 class CollectMayaCurrentFile(pyblish.api.ContextPlugin):
@@ -15,6 +11,9 @@ class CollectMayaCurrentFile(pyblish.api.ContextPlugin):
     version = (0, 1, 0)
 
     def process(self, context):
+        import os
+        from maya import cmds
+
         """Inject the current working file"""
         current_file = cmds.file(sceneName=True, query=True)
 

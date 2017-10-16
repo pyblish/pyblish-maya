@@ -1,8 +1,4 @@
-import os
-
 import pyblish.api
-
-from maya import cmds
 
 
 class CollectMayaWorkspace(pyblish.api.ContextPlugin):
@@ -15,6 +11,9 @@ class CollectMayaWorkspace(pyblish.api.ContextPlugin):
     version = (0, 1, 0)
 
     def process(self, context):
+        import os
+        from maya import cmds
+
         workspace = cmds.workspace(rootDirectory=True, query=True)
         if not workspace:
             # Project has not been set. Files will
