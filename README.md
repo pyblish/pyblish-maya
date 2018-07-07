@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/pyblish/pyblish-maya.svg?branch=master)](https://travis-ci.org/pyblish/pyblish-maya)
 
-Pyblish integration for Autodesk Maya 2008-2017.
+Pyblish integration for Autodesk Maya 2008-2019.
 
 <br>
 <br>
