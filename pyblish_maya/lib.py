@@ -64,7 +64,12 @@ def show():
         if o.objectName() == "MayaWindow"
     )
 
-    return (_discover_gui() or _show_no_gui)(parent)
+    gui = _discover_gui()
+
+    if gui is None:
+        _show_no_gui()
+    else:
+        return gui(parent)
 
 
 def _discover_gui():
@@ -269,15 +274,13 @@ def _show_no_gui():
     layout.addWidget(spacer, layout.rowCount(), 0, 1, layout.columnCount())
 
     messagebox.setWindowTitle("Uh oh")
-    messagebox.setText("No registered GUI found.")
+
+    text = "No registered GUI found.\n\n"
 
     if not pyblish.api.registered_guis():
-        messagebox.setInformativeText(
+        text += (
             "In order to show you a GUI, one must first be registered. "
-            "Press \"Show details...\" below for information on how to "
-            "do that.")
-
-        messagebox.setDetailedText(
+            "\n"
             "Pyblish supports one or more graphical user interfaces "
             "to be registered at once, the next acting as a fallback to "
             "the previous."
@@ -299,21 +302,19 @@ def _show_no_gui():
             "The next time you try running this, Lite will appear."
             "\n"
             "See http://api.pyblish.com/register_gui.html for "
-            "more information.")
-
+            "more information."
+        )
     else:
-        messagebox.setInformativeText(
+        text += (
             "None of the registered graphical user interfaces "
             "could be found."
             "\n"
+            "These interfaces are currently registered:"
             "\n"
-            "Press \"Show details\" for more information.")
+            "%s" % "\n".join(pyblish.api.registered_guis())
+        )
 
-        messagebox.setDetailedText(
-            "These interfaces are currently registered."
-            "\n"
-            "%s" % "\n".join(pyblish.api.registered_guis()))
-
+    messagebox.setText(text)
     messagebox.setStandardButtons(messagebox.Ok)
     messagebox.exec_()
 
