@@ -19,6 +19,9 @@ class CollectMayaCurrentFile(pyblish.api.ContextPlugin):
 
         # Maya returns forward-slashes by default
         normalised = os.path.normpath(current_file)
+        if normalised == ".":
+            # 'normpath' returns '.' when given an empty string
+            normalised = ""
 
         context.set_data('currentFile', value=normalised)
 
