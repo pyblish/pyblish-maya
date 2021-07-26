@@ -16,14 +16,11 @@ class CollectMayaCurrentFile(pyblish.api.ContextPlugin):
 
         """Inject the current working file"""
         current_file = cmds.file(sceneName=True, query=True)
+        if current_file:
+            # Maya returns forward-slashes by default
+            current_file = os.path.normpath(current_file)
 
-        # Maya returns forward-slashes by default
-        normalised = os.path.normpath(current_file)
-        if normalised == ".":
-            # 'normpath' returns '.' when given an empty string
-            normalised = ""
-
-        context.set_data('currentFile', value=normalised)
+        context.set_data('currentFile', value=current_file)
 
         # For backwards compatibility
-        context.set_data('current_file', value=normalised)
+        context.set_data('current_file', value=current_file)
