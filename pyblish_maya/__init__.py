@@ -1,4 +1,4 @@
-from version import *
+from .version import *
 
 from .lib import (
     show,
