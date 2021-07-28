@@ -338,7 +338,7 @@ def dock(window):
         raise ValueError("Could not find the main Maya window.")
 
     # Deleting existing dock
-    print "Deleting existing dock..."
+    print("Deleting existing dock...")
     if self._dock:
         self._dock.setParent(None)
         self._dock.deleteLater()
@@ -348,7 +348,7 @@ def dock(window):
             cmds.deleteUI(self._dock_control)
 
     # Creating new dock
-    print "Creating new dock..."
+    print("Creating new dock...")
     dock = Dock(parent=main_window)
 
     dock_control = cmds.dockControl(label=window.windowTitle(), area="right",
