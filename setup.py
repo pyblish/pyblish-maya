@@ -5,7 +5,7 @@ import imp
 
 from setuptools import setup, find_packages
 
-with open("README.txt") as f:
+with open("README.md") as f:
     readme = f.read()
 
 
